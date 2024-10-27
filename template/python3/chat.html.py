@@ -18,8 +18,14 @@ def debug_print(*args, **kwargs):
 		print(*args, **kwargs)
 
 def read_file(file_path):
-	with open(file_path, 'r') as file:
-		return file.read()
+	try:
+		with open(file_path, 'rb') as f:
+			raw_data = f.read()
+		detected_encoding = chardet.detect(raw_data)['encoding'] or 'utf-8'
+		return raw_data.decode(detected_encoding)
+	except Exception as e:
+		print(f"Error reading file {file_path}: {str(e)}")
+		return ""
 
 # Compile regular expressions once
 author_regex = re.compile(r'Author:\s*(.+)', re.IGNORECASE)
