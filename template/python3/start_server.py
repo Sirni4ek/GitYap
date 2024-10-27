@@ -106,17 +106,22 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 	def handle_chat_post(self):
 		"""Handle POST request for chat messages"""
-		content_length = int(self.headers['Content-Length'])
-		post_data = self.rfile.read(content_length).decode('utf-8')
-
 		try:
+			content_length = int(self.headers.get('Content-Length', 0))
+			if content_length > 1024 * 1024:  # 1MB limit
+				self.send_error(413, "Request entity too large")
+				return
+
+			post_data = self.rfile.read(content_length).decode('utf-8')
 			data = json.loads(post_data)
-			author = data.get('author', '')
-			content = data.get('content', '')
-			tags = data.get('tags', [])
+
+			# Sanitize and validate input
+			author = html.escape(data.get('author', '').strip())[:50]  # Limit author length
+			content = html.escape(data.get('content', '').strip())[:5000]  # Limit content length
+			tags = [html.escape(tag.strip())[:30] for tag in data.get('tags', [])][:10]  # Limit tags
 
 			if not author or not content:
-				self.send_error(400, "Bad Request: Missing author or content")
+				self.send_error(400, "Missing required fields")
 				return
 
 			# Create message directory if it doesn't exist
