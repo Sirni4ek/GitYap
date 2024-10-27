@@ -17,19 +17,23 @@ body {
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.1);
     overflow: hidden;
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
 .chat-header {
-    padding: 20px;
+    padding: 15px;
     border-bottom: 1px solid #eee;
     background: linear-gradient(135deg, #0066cc, #0052a3);
     color: white;
+    flex-shrink: 0;
 }
 
 .chat-header h1 {
-    margin: 0 0 10px 0;
-    font-size: 24px;
+    margin: 0 0 5px 0;
+    font-size: 20px;
 }
 
 .chat-header p {
@@ -38,19 +42,43 @@ body {
     font-size: 14px;
 }
 
+/* Search section */
+.search-section {
+    padding: 8px 15px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+#message-search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+#message-search:focus {
+    outline: none;
+    border-color: #0066cc;
+}
+
 /* Messages section */
 .chat-messages {
-    padding: 20px;
+    padding: 15px;
     overflow-y: auto;
-    max-height: 70vh;
+    flex-grow: 1;
+    height: 0;
+    margin-bottom: auto;
 }
 
 /* Individual message */
 .message {
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
     border: 1px solid #eee;
-    border-radius: 12px;
+    border-radius: 8px;
     background: #fff;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     transition: transform 0.2s ease;
@@ -109,9 +137,12 @@ body {
 
 /* Form section */
 .message-form {
-    padding: 20px;
+    padding: 15px;
     border-top: 1px solid #eee;
     background: #f8f9fa;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
 }
 
 .message-form textarea,
@@ -128,7 +159,8 @@ body {
 }
 
 .message-form textarea {
-    min-height: 100px;
+    min-height: 80px;
+    max-height: 150px;
     resize: vertical;
 }
 
@@ -155,6 +187,40 @@ body {
     background: #0052a3;
 }
 
+/* Reply styles */
+.message.reply {
+    margin-left: 40px;
+    border-left: 3px solid #0066cc;
+}
+
+.reply-button {
+    background: none;
+    border: none;
+    color: #0066cc;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 5px 10px;
+    margin-top: 5px;
+    border-radius: 15px;
+    transition: background 0.2s ease;
+}
+
+.reply-button:hover {
+    background: #f0f7ff;
+}
+
+.reply-to {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+/* Message highlight */
+.message-highlight {
+    background-color: #fff3cd !important;
+    transition: background-color 0.3s ease;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
     body {
@@ -173,7 +239,7 @@ body {
     .message-form textarea,
     .message-form input,
     .message-form button {
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
     }
 }
 
@@ -219,37 +285,7 @@ body {
     .expand-link:hover {
         background: #444;
     }
-}
 
-/* In template/css/chat_style.css, modify the search-related styles */
-.search-section {
-    padding: 10px 20px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
-}
-
-#message-search {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
-}
-
-#message-search:focus {
-    outline: none;
-    border-color: #0066cc;
-}
-
-/* Message highlight colors for light mode */
-.message-highlight {
-    background-color: #fff3cd !important;
-    transition: background-color 0.3s ease;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
     .search-section {
         background: #262626;
     }
@@ -260,42 +296,11 @@ body {
         color: #fff;
     }
 
-    /* Message highlight colors for dark mode */
     .message-highlight {
-        background-color: #4d4000 !important; /* Darker yellow that works with light text */
+        background-color: #4d4000 !important;
         color: #fff !important;
     }
-}
-/* Add to chat_style.css */
-.message.reply {
-    margin-left: 40px;
-    border-left: 3px solid #0066cc;
-}
 
-.reply-button {
-    background: none;
-    border: none;
-    color: #0066cc;
-    cursor: pointer;
-    font-size: 0.9em;
-    padding: 5px 10px;
-    margin-top: 5px;
-    border-radius: 15px;
-    transition: background 0.2s ease;
-}
-
-.reply-button:hover {
-    background: #f0f7ff;
-}
-
-.reply-to {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
     .reply-button {
         color: #66b3ff;
     }
@@ -308,4 +313,5 @@ body {
         color: #999;
     }
 }
+
 /* end chat_style.css ; marker comment, please do not remove */
