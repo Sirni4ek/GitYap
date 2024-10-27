@@ -19,6 +19,8 @@ import urllib.parse
 import json
 from datetime import datetime
 from typing import List, Tuple
+import shutil
+from pathlib import Path
 
 # Configuration constants
 SCRIPT_TYPES = ['py', 'pl', 'rb', 'sh', 'js']
@@ -36,14 +38,46 @@ MIME_TYPES = {
 }
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+	static_files_initialized = False  # Class variable to track initialization
+
+	@classmethod
+	def setup_static_files(cls, directory):
+		"""Setup static files by copying them from template to static directories"""
+		if cls.static_files_initialized:
+			return
+
+		# Create static directories if they don't exist
+		static_dirs = ['css', 'js']
+		for dir_name in static_dirs:
+			static_dir = Path(directory) / dir_name
+			template_dir = Path(directory) / 'template' / dir_name
+
+			# Create directory if it doesn't exist
+			static_dir.mkdir(parents=True, exist_ok=True)
+
+			# Copy all files from template directory to static directory
+			if template_dir.exists():
+				for file in template_dir.glob('*.*'):
+					dest_file = static_dir / file.name
+					if not dest_file.exists():  # Only copy if file doesn't exist
+						shutil.copy2(file, dest_file)
+						print(f"Copied {file} to {dest_file}")
+
+		cls.static_files_initialized = True
+
 	def __init__(self, *args, **kwargs):
 		self.directory = os.getcwd()  # Set default directory
 		super().__init__(*args, directory=self.directory)
 
 	def do_GET(self):
 		"""Handle GET requests"""
-		if self.path in ['/', '/index.html']:
-			self.ensure_index_html()  # Add this line
+		# Add handling for CSS files
+		if self.path.startswith('/css/'):
+			self.serve_static_file(self.path[1:])  # Remove leading slash
+		elif self.path.startswith('/js/'):
+			self.serve_static_file(self.path[1:])
+		elif self.path in ['/', '/index.html']:
+			self.ensure_index_html()
 			self.serve_static_file('index.html')
 		elif self.path == '/log.html':
 			self.generate_and_serve_report()
@@ -238,16 +272,28 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 	def serve_static_file(self, path: str):
 		"""Serve a static file"""
 		file_path = os.path.join(self.directory, path)
+
+		# If file doesn't exist in root directory, check template directory
+		if not os.path.isfile(file_path):
+			template_path = os.path.join(self.directory, 'template', path)
+			if os.path.isfile(template_path):
+				file_path = template_path
+
 		if os.path.isfile(file_path):
-			with open(file_path, 'rb') as f:
-				content = f.read()
-			content_type = self.get_content_type(file_path)
-			self.send_response(200)
-			self.send_header('Content-type', content_type)
-			self.end_headers()
-			self.wfile.write(content)
+			try:
+				with open(file_path, 'rb') as f:
+					content = f.read()
+				content_type = self.get_content_type(file_path)
+				self.send_response(200)
+				self.send_header('Content-type', content_type)
+				self.send_header('Cache-Control', 'public, max-age=3600')  # Cache for 1 hour
+				self.end_headers()
+				self.wfile.write(content)
+			except Exception as e:
+				print(f"Error serving {file_path}: {e}")
+				self.send_error(500, f"Internal server error: {str(e)}")
 		else:
-			self.send_error(404)
+			self.send_error(404, f"File not found: {path}")
 
 	def get_content_type(self, file_path: str) -> str:
 		"""Get the content type for a file"""
@@ -269,11 +315,13 @@ def find_available_port(start_port: int) -> int:
 def run_server(port: int, directory: str) -> bool:
 	"""Run the HTTP server"""
 	os.chdir(directory)
-	handler = CustomHTTPRequestHandler
+
+	# Setup static files once before starting the server
+	CustomHTTPRequestHandler.setup_static_files(directory)
 
 	while port < 65535:  # Maximum valid port number
 		try:
-			with socketserver.TCPServer(("", port), handler) as httpd:
+			with socketserver.TCPServer(("", port), CustomHTTPRequestHandler) as httpd:
 				print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
 				httpd.serve_forever()
 				return True
@@ -302,4 +350,4 @@ if __name__ == "__main__":
 
 	run_server(args.port, args.directory)
 
-# end start_server.py ; marker comment, please do not remove
+# end start_server.py ; marker comment, please do not remove`
