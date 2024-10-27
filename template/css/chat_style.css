@@ -266,4 +266,46 @@ body {
         color: #fff !important;
     }
 }
+/* Add to chat_style.css */
+.message.reply {
+    margin-left: 40px;
+    border-left: 3px solid #0066cc;
+}
+
+.reply-button {
+    background: none;
+    border: none;
+    color: #0066cc;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 5px 10px;
+    margin-top: 5px;
+    border-radius: 15px;
+    transition: background 0.2s ease;
+}
+
+.reply-button:hover {
+    background: #f0f7ff;
+}
+
+.reply-to {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .reply-button {
+        color: #66b3ff;
+    }
+
+    .reply-button:hover {
+        background: #1a1a1a;
+    }
+
+    .reply-to {
+        color: #999;
+    }
+}
 /* end chat_style.css ; marker comment, please do not remove */

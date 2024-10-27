@@ -45,13 +45,23 @@ def process_file(file_path, repo_path):
 		detected_encoding = chardet.detect(raw_data)['encoding']
 		content = raw_data.decode(detected_encoding)
 		author, hashtags = extract_metadata(content)
-		content = re.sub(r'author:\s*.+', '', content, flags=re.IGNORECASE).strip()
+
+		# Extract reply_to from content if it exists
+		reply_to = None
+		reply_match = re.search(r'Reply-To:\s*(.+)', content)
+		if reply_match:
+			reply_to = reply_match.group(1)
+
+		content = re.sub(r'(author|reply-to):\s*.+', '', content, flags=re.IGNORECASE).strip()
+
 		return {
 			'author': author,
 			'content': content,
 			'timestamp': modification_time,
 			'hashtags': hashtags,
-			'file_path': file_path
+			'file_path': file_path,
+			'message_id': os.path.splitext(os.path.basename(file_path))[0],
+			'reply_to': reply_to
 		}
 	except Exception as e:
 		debug_print(f"Error reading file {file_path}: {str(e)}")
@@ -84,13 +94,20 @@ def generate_chat_html(repo_path, output_file, max_messages=50, max_message_leng
 		expand_link = f'<a href="#" class="expand-link" data-message-id="{idx}">{"Show More" if is_truncated else ""}</a>'
 		full_content = f'<div class="full-message" id="full-message-{idx}" style="display: none;">{msg["content"]}</div>' if is_truncated else ''
 
+		# Add reply-related fields
+		reply_class = 'reply' if msg.get('reply_to') else ''
+		reply_to = f'<div class="reply-to">Replying to: {msg["reply_to"]}</div>' if msg.get('reply_to') else ''
+
 		chat_messages.append(MESSAGE_TEMPLATE.format(
 			author=msg['author'],
 			content=truncated_content,
 			full_content=full_content,
 			expand_link=expand_link,
 			timestamp=msg['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
-			hashtags=' '.join(msg['hashtags'])
+			hashtags=' '.join(msg['hashtags']),
+			message_id=msg['message_id'],  # Add this line
+			reply_class=reply_class,       # Add this line
+			reply_to=reply_to              # Add this line
 		))
 
 	html_content = HTML_TEMPLATE.format(

@@ -1,5 +1,6 @@
 <!-- begin template/html/chat_message.html ; marker comment, please do not remove -->
-<div class="message">
+<div class="message {reply_class}">
+    {reply_to}
     <div class="message-header">
         <span class="author">{author}</span>
         <span class="timestamp">{timestamp}</span>
@@ -10,5 +11,8 @@
         {expand_link}
     </div>
     <div class="hashtags">{hashtags}</div>
+    <button class="reply-button" onclick="replyToMessage('{message_id}', '{author}')" title="Reply to this message">
+        Reply
+    </button>
 </div>
 <!-- end chat_message.html ; marker comment, please do not remove -->

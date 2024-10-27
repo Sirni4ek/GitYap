@@ -47,13 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
 async function postMessage(event) {
     event.preventDefault();
     const form = event.target;
     const data = {
         content: form.content.value,
         author: form.author.value,
-        tags: form.tags.value.split(' ').filter(t => t).map(t => t.startsWith('#') ? t : '#' + t)
+        tags: form.tags.value.split(' ').filter(t => t).map(t => t.startsWith('#') ? t : '#' + t),
+        reply_to: form.reply_to?.value || null
     };
 
     try {
@@ -62,14 +64,34 @@ async function postMessage(event) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         });
-        
+
         if (!response.ok) throw new Error(await response.text());
-        
+
         form.reset();
-        window.location.reload();
+        // Add a small delay before reloading to ensure the server has time to process
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
     } catch (error) {
         alert('Error posting message: ' + error.message);
     }
     return false;
 }
+
+function replyToMessage(messageId, author) {
+    const textarea = document.querySelector('textarea[name="content"]');
+    const replyToInput = document.querySelector('input[name="reply_to"]');
+
+    // Focus the textarea
+    textarea.focus();
+
+    // Set the reply_to field
+    if (replyToInput) {
+        replyToInput.value = messageId;
+    }
+
+    // Add a visual indicator in the textarea
+    textarea.value = `@${author} ` + textarea.value;
+}
+
 /* end chat.js ; marker comment, please do not remove */
