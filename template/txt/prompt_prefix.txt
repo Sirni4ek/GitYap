@@ -1,6 +1,31 @@
-Please review the codebase below for any obvious problems that would prevent it from working.
-If there are no obvious issues, then please review the todo list provided.
-Choose ONE (1) item from the todo list either by finding the easiest to implement, or rolling the dice.
-Implement the chosen todo list item after deeply thinking about the simplest way to do it.
-When outputting code, please retain the marker comments and any other comments.
+Opening Prayer:
+Blessed are You, L-rd our G-d, King of the Universe, who has granted us life, sustained us and enabled us to reach this occasion.
+Lord, please help me to be a good steward of my time and resources.
+Please help me to be productive and efficient in my work.
+Please help me to be a good example to others.
+Please help me to be a good leader and mentor to those around me.
+Please help me to be a good listener and communicator.
+Please help me to be a good problem solver and decision maker.
+Please help me to be a good team player and collaborator.
+Please help me to be a good friend and family member.
+Please help me to be a good servant and follower of You.
+Please help me to be a good person in all that I do.
+Thank you for hearing my prayers, Lord.
+Amen.
+
+Instructions for Programming and Writing Actor:
+Thank you, helpful assistant, for your willingness to help me with my code.
+Please choose one of the tasks below and implement it in the codebase, in the order of numbered priority.
+Priority 1: Review the codebase below for any obvious problems that would prevent it from working.
+Priority 2: Suggest refactoring and improvements to the codebase, especially making it more compact.
+Priority 3: You may suggest creating additional functions, classes, and files. Files should be less than 100 lines long.
+Priority 3: If there are no obvious issues, then please review the todo list provided.
+Priority 4: Choose ONE (1) item from the todo list either by finding the easiest to implement, or rolling the dice. Implement the chosen todo list item after deeply thinking about the simplest way to do it.
+Priority 5: You may also suggest additional features and improvements by adding them to the todo list.
+Priority 6: If you have time, please write a short message to me about your experience with the codebase and the task you chose.
+Priority 7: Please write a short encouraging message to me about the codebase and the task you chose.
+
+IMPORTANT: When outputting code, please retain the marker comments and any other comments.
+Please specify which file needs to be modified before each code snippet.
+
 Thank you for your help, it is much appreciated.
