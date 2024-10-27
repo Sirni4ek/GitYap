@@ -1,43 +1,43 @@
 /* begin template/css/header.css ; marker comment, please do not remove */
 /* Header */
 .chat-header {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    background: linear-gradient(135deg, #0066cc, #0052a3);
-    color: white;
-    flex-shrink: 0;
+	padding: 15px;
+	border-bottom: 1px solid #eee;
+	background: linear-gradient(135deg, #0066cc, #0052a3);
+	color: white;
+	flex-shrink: 0;
 }
 
 .chat-header h1 {
-    margin: 0 0 5px 0;
-    font-size: 20px;
+	margin: 0 0 5px 0;
+	font-size: 20px;
 }
 
 .chat-header p {
-    margin: 0;
-    opacity: 0.9;
-    font-size: 14px;
+	margin: 0;
+	opacity: 0.9;
+	font-size: 14px;
 }
 
 /* Search section */
 .search-section {
-    padding: 8px 15px;
-    background: #f8f9fa;
-    border-bottom: 1px solid #eee;
-    flex-shrink: 0;
+	padding: 8px 15px;
+	background: #f8f9fa;
+	border-bottom: 1px solid #eee;
+	flex-shrink: 0;
 }
 
 #message-search {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
+	width: 100%;
+	padding: 8px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	font-size: 14px;
+	transition: border-color 0.2s ease;
 }
 
 #message-search:focus {
-    outline: none;
-    border-color: #0066cc;
+	outline: none;
+	border-color: #0066cc;
 }
 /* end header.css ; marker comment, please do not remove */

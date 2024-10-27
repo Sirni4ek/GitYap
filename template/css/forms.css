@@ -1,53 +1,53 @@
 /* begin template/css/forms.css ; marker comment, please do not remove */
 /* Form section */
 .message-form {
-    padding: 15px;
-    border-top: 1px solid #eee;
-    background: #f8f9fa;
-    flex-shrink: 0;
-    position: sticky;
-    bottom: 0;
+	padding: 15px;
+	border-top: 1px solid #eee;
+	background: #f8f9fa;
+	flex-shrink: 0;
+	position: sticky;
+	bottom: 0;
 }
 
 .message-form textarea,
 .message-form input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 14px;
-    transition: border-color 0.2s ease;
+	width: 100%;
+	padding: 12px;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: 14px;
+	transition: border-color 0.2s ease;
 }
 
 .message-form textarea {
-    min-height: 80px;
-    max-height: 150px;
-    resize: vertical;
+	min-height: 80px;
+	max-height: 150px;
+	resize: vertical;
 }
 
 .message-form textarea:focus,
 .message-form input:focus {
-    outline: none;
-    border-color: #0066cc;
+	outline: none;
+	border-color: #0066cc;
 }
 
 .message-form button {
-    width: 100%;
-    padding: 12px;
-    background: #0066cc;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    transition: background 0.2s ease;
+	width: 100%;
+	padding: 12px;
+	background: #0066cc;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: 600;
+	transition: background 0.2s ease;
 }
 
 .message-form button:hover {
-    background: #0052a3;
+	background: #0052a3;
 }
 /* end forms.css ; marker comment, please do not remove */
