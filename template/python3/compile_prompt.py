@@ -145,7 +145,6 @@ def compile_prompt(template_dir='template'):
 		output.append(f"Total Size: {format_size(total_size)}\n")
 		output.append("Individual Files:")
 		output.extend(file_stats)
-		output.append("\nSource Files:")
 
 		# Add suffix if it exists
 		if suffix_content:
