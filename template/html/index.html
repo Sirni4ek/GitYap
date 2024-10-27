@@ -1,0 +1,104 @@
+<!-- begin index.html ; marker comment, please do not remove -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timble - Home</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        nav {
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 20px;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        a:hover {
+            background-color: #f0f7ff;
+        }
+        h1 {
+            margin: 0 0 20px 0;
+            color: #0066cc;
+        }
+        p {
+            margin: 0 0 15px 0;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a1a1a;
+                color: #fff;
+            }
+            .container {
+                background-color: #2d2d2d;
+            }
+            h1 {
+                color: #66b3ff;
+            }
+            p {
+                color: #ccc;
+            }
+            a {
+                color: #66b3ff;
+            }
+            a:hover {
+                background-color: #1a1a1a;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Timble</h1>
+    <nav>
+        <ul>
+            <li><a href="/chat.html">Chat</a></li>
+            <li><a href="/log.html">View Logs</a></li>
+        </ul>
+    </nav>
+    <p>Welcome to Timble, a simple and efficient messaging platform. Use the navigation above to access different features:</p>
+    <ul>
+        <li><strong>Chat:</strong> Join the conversation in real-time</li>
+        <li><strong>Logs:</strong> View message history and activity logs</li>
+    </ul>
+</div>
+</body>
+</html>
+<!-- end index.html ; marker comment, please do not remove -->

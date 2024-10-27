@@ -43,6 +43,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 	def do_GET(self):
 		"""Handle GET requests"""
 		if self.path in ['/', '/index.html']:
+			self.ensure_index_html()  # Add this line
 			self.serve_static_file('index.html')
 		elif self.path == '/log.html':
 			self.generate_and_serve_report()
@@ -195,6 +196,18 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 			self.wfile.write(html_content.encode('utf-8'))
 		except IOError:
 			self.send_error(404, "File not found")
+
+	def ensure_index_html(self):
+		"""Ensure index.html exists in the home directory"""
+		home_index = os.path.join(self.directory, 'index.html')
+		if not os.path.exists(home_index):
+			template_index = os.path.join(self.directory, 'template', 'html', 'index.html')
+			if os.path.exists(template_index):
+				with open(template_index, 'r', encoding='utf-8') as src:
+					content = src.read()
+				with open(home_index, 'w', encoding='utf-8') as dst:
+					dst.write(content)
+				print(f"Created index.html in home directory")
 
 	def generate_html_content(self, title: str, content: str) -> str:
 		"""Generate HTML content for displaying text files"""
