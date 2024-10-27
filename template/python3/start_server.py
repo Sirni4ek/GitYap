@@ -37,8 +37,8 @@ MIME_TYPES = {
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 	def __init__(self, *args, **kwargs):
-		self.directory = kwargs.get('directory', os.getcwd())
-		super().__init__(*args, **kwargs)
+		self.directory = os.getcwd()  # Set default directory
+		super().__init__(*args, directory=self.directory)
 
 	def do_GET(self):
 		"""Handle GET requests"""
