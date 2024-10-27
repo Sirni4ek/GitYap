@@ -99,4 +99,36 @@ function replyToMessage(messageId, author) {
 	textarea.value = `@${author} ` + textarea.value;
 }
 
+// Add form expansion functionality
+document.addEventListener('DOMContentLoaded', function() {
+	const messageForm = document.getElementById('post-form');
+	const textarea = messageForm.querySelector('textarea');
+
+	textarea.addEventListener('focus', function() {
+		messageForm.classList.add('expanded');
+	});
+
+	// Optional: Collapse form when clicking outside
+	document.addEventListener('click', function(e) {
+		if (!messageForm.contains(e.target)) {
+			messageForm.classList.remove('expanded');
+		}
+	});
+
+	// Store and restore author name
+	const authorInput = messageForm.querySelector('input[name="author"]');
+	if (authorInput) {
+		// Restore saved author name
+		const savedAuthor = localStorage.getItem('authorName');
+		if (savedAuthor) {
+			authorInput.value = savedAuthor;
+		}
+
+		// Save author name when changed
+		authorInput.addEventListener('change', function() {
+			localStorage.setItem('authorName', this.value);
+		});
+	}
+});
+
 /* end chat.js ; marker comment, please do not remove */

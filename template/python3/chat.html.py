@@ -76,7 +76,7 @@ def process_file(file_path, repo_path):
 def generate_chat_html(repo_path, output_file, max_messages=50, max_message_length=300, title="Timble Chat"):
 	HTML_TEMPLATE = read_file('./template/html/chat_page.html')
 	MESSAGE_TEMPLATE = read_file('./template/html/chat_message.html')
-	CSS_STYLE = read_file('./template/css/chat_style.css')
+	#CSS_STYLE = read_file('./template/css/chat_style.css')
 	JS_TEMPLATE = read_file('./template/js/chat.js')
 
 	message_dir = os.path.join(repo_path, "message")
@@ -117,7 +117,7 @@ def generate_chat_html(repo_path, output_file, max_messages=50, max_message_leng
 		))
 
 	html_content = HTML_TEMPLATE.format(
-		style=CSS_STYLE,
+		#style=CSS_STYLE,
 		chat_messages=''.join(chat_messages),
 		message_count=len(messages),
 		current_time=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),

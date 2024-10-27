@@ -1,6 +1,8 @@
 Priority tasks:
 
-Make more content fit on the page in the interface.
+Make more content fit on the page in the interface. (done)
+	Make the entry form only display the message field by default (done)
+	In the chat list, display the user's name and message on the same line (done)
 
 Make the text entry field always visible. (done)
 

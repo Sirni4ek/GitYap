@@ -1,7 +1,7 @@
 /* begin template/css/forms.css ; marker comment, please do not remove */
 /* Form section */
 .message-form {
-	padding: 15px;
+	padding: 10px; /* Reduced from 15px */
 	border-top: 1px solid #eee;
 	background: #f8f9fa;
 	flex-shrink: 0;
@@ -12,10 +12,10 @@
 .message-form textarea,
 .message-form input {
 	width: 100%;
-	padding: 12px;
-	margin-bottom: 10px;
+	padding: 8px; /* Reduced from 12px */
+	margin-bottom: 8px; /* Reduced from 10px */
 	border: 1px solid #ddd;
-	border-radius: 8px;
+	border-radius: 6px; /* Reduced from 8px */
 	box-sizing: border-box;
 	font-family: inherit;
 	font-size: 14px;
@@ -23,8 +23,8 @@
 }
 
 .message-form textarea {
-	min-height: 80px;
-	max-height: 150px;
+	min-height: 60px; /* Reduced from 80px */
+	max-height: 120px; /* Reduced from 150px */
 	resize: vertical;
 }
 
@@ -36,13 +36,13 @@
 
 .message-form button {
 	width: 100%;
-	padding: 12px;
+	padding: 8px; /* Reduced from 12px */
 	background: #0066cc;
 	color: white;
 	border: none;
-	border-radius: 8px;
+	border-radius: 6px; /* Reduced from 8px */
 	cursor: pointer;
-	font-size: 16px;
+	font-size: 14px; /* Reduced from 16px */
 	font-weight: 600;
 	transition: background 0.2s ease;
 }
