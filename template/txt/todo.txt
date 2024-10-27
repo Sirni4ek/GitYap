@@ -1,5 +1,7 @@
 Priority tasks:
 
+Focus the send message field when page is loaded.
+
 Make more content fit on the page in the interface. (done)
 	Make the entry form only display the message field by default (done)
 	In the chat list, display the user's name and message on the same line (done)
@@ -7,6 +9,8 @@ Make more content fit on the page in the interface. (done)
 Make the text entry field always visible. (done)
 
 Remember the user's name and display it in the interface.
+	If the user's name is not set, and the user tries to send a message, record it as "Guest"
+	Add functionality to show/hide the username field and the tags field
 
 Other tasks:
 
