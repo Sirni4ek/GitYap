@@ -11,6 +11,41 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    const searchInput = document.getElementById('message-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const messages = document.querySelectorAll('.message');
+
+            messages.forEach(message => {
+                const content = message.querySelector('.message-content').textContent.toLowerCase();
+                const author = message.querySelector('.author').textContent.toLowerCase();
+                const hashtags = message.querySelector('.hashtags').textContent.toLowerCase();
+
+                const matches = content.includes(searchTerm) ||
+                    author.includes(searchTerm) ||
+                    hashtags.includes(searchTerm);
+
+                message.style.display = matches ? 'block' : 'none';
+
+                // Add/remove highlight class instead of directly setting backgroundColor
+                if (matches && searchTerm) {
+                    message.classList.add('message-highlight');
+                } else {
+                    message.classList.remove('message-highlight');
+                }
+            });
+        });
+
+        // Add clear search functionality when pressing Escape
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.value = '';
+                this.dispatchEvent(new Event('input'));
+            }
+        });
+    }
+
 });
 async function postMessage(event) {
     event.preventDefault();

@@ -221,4 +221,49 @@ body {
     }
 }
 
+/* In template/css/chat_style.css, modify the search-related styles */
+.search-section {
+    padding: 10px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+}
+
+#message-search {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+#message-search:focus {
+    outline: none;
+    border-color: #0066cc;
+}
+
+/* Message highlight colors for light mode */
+.message-highlight {
+    background-color: #fff3cd !important;
+    transition: background-color 0.3s ease;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .search-section {
+        background: #262626;
+    }
+
+    #message-search {
+        background: #333;
+        border-color: #444;
+        color: #fff;
+    }
+
+    /* Message highlight colors for dark mode */
+    .message-highlight {
+        background-color: #4d4000 !important; /* Darker yellow that works with light text */
+        color: #fff !important;
+    }
+}
 /* end chat_style.css ; marker comment, please do not remove */
