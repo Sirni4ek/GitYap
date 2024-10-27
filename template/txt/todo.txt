@@ -1,3 +1,13 @@
+Priority tasks:
+
+Make more content fit on the page in the interface.
+
+Make the text entry field always visible. (done)
+
+Remember the user's name and display it in the interface.
+
+Other tasks:
+
 Messages should save, but new messages are not being displayed. Fix this issue. (done)
 
 In start_server if port is already in use, it should try the next port. (done)
