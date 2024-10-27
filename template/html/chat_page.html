@@ -2,35 +2,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{title}</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Base styles must load first -->
-    <link rel="stylesheet" href="/css/base.css">
-    <!-- Header and form styles can load next -->
-    <link rel="stylesheet" href="/css/header.css">
-    <link rel="stylesheet" href="/css/forms.css">
-    <!-- Message styles -->
-    <link rel="stylesheet" href="/css/messages.css">
-    <!-- Responsive styles should load last to properly override other styles -->
-    <link rel="stylesheet" href="/css/responsive.css">
+	<title>{title}</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- Base styles must load first -->
+	<link rel="stylesheet" href="/css/base.css">
+	<!-- Header and form styles can load next -->
+	<link rel="stylesheet" href="/css/header.css">
+	<link rel="stylesheet" href="/css/forms.css">
+	<!-- Message styles -->
+	<link rel="stylesheet" href="/css/messages.css">
+	<!-- Responsive styles should load last to properly override other styles -->
+	<link rel="stylesheet" href="/css/responsive.css">
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1>{title}</h1>
-            <p>Messages: {message_count} | Last updated: {current_time}</p>
-        </div>
-        <div class="search-section">
-            <input type="text" id="message-search" placeholder="Search messages...">
-        </div>
-        <div class="chat-messages">
-            {chat_messages}
-        </div>
-        <div class="message-form">
-            {message_form}
-        </div>
-    </div>
+	<div class="chat-container">
+		<div class="chat-header">
+			<h1>{title}</h1>
+			<p>Messages: {message_count} | Last updated: {current_time}</p>
+		</div>
+		<div class="search-section">
+			<input type="text" id="message-search" placeholder="Search messages...">
+		</div>
+		<div class="chat-messages">
+			{chat_messages}
+		</div>
+		<div class="message-form">
+			{message_form}
+		</div>
+	</div>
 </body>
 </html>
 <!-- end chat_page.html ; marker comment, please do not remove -->
