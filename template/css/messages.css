@@ -1,0 +1,106 @@
+/* begin template/css/messages.css ; marker comment, please do not remove */
+/* Messages section */
+.chat-messages {
+    padding: 15px;
+    overflow-y: auto;
+    flex-grow: 1;
+    height: 0;
+    margin-bottom: auto;
+}
+
+/* Individual message */
+.message {
+    margin-bottom: 15px;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.message:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.message-header {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.author {
+    font-weight: 600;
+    color: #0066cc;
+}
+
+.timestamp {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.message-content {
+    line-height: 1.6;
+    color: #333;
+    word-wrap: break-word;
+}
+
+.hashtags {
+    margin-top: 10px;
+    color: #0066cc;
+    font-size: 0.9em;
+}
+
+.expand-link {
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 0.9em;
+    display: inline-block;
+    margin-top: 5px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background: #f0f7ff;
+    transition: background 0.2s ease;
+}
+
+.expand-link:hover {
+    background: #e0f0ff;
+}
+
+/* Reply styles */
+.message.reply {
+    margin-left: 40px;
+    border-left: 3px solid #0066cc;
+}
+
+.reply-button {
+    background: none;
+    border: none;
+    color: #0066cc;
+    cursor: pointer;
+    font-size: 0.9em;
+    padding: 5px 10px;
+    margin-top: 5px;
+    border-radius: 15px;
+    transition: background 0.2s ease;
+}
+
+.reply-button:hover {
+    background: #f0f7ff;
+}
+
+.reply-to {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+/* Message highlight */
+.message-highlight {
+    background-color: #fff3cd !important;
+    transition: background-color 0.3s ease;
+}
+/* end messages.css ; marker comment, please do not remove */

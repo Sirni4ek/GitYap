@@ -4,9 +4,16 @@
 <head>
     <title>{title}</title>
     <meta charset="UTF-8">
-    <style>
-        {style}
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Base styles must load first -->
+    <link rel="stylesheet" href="/css/base.css">
+    <!-- Header and form styles can load next -->
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/forms.css">
+    <!-- Message styles -->
+    <link rel="stylesheet" href="/css/messages.css">
+    <!-- Responsive styles should load last to properly override other styles -->
+    <link rel="stylesheet" href="/css/responsive.css">
 </head>
 <body>
     <div class="chat-container">
