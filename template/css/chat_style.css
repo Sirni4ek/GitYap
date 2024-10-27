@@ -1,53 +1,88 @@
 /* begin template/css/chat_style.css ; marker comment, please do not remove */
 
+/* Base styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     background-color: #f0f0f0;
+    line-height: 1.6;
 }
 
+/* Container */
 .chat-container {
     max-width: 800px;
     margin: 0 auto;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
 
+/* Header */
 .chat-header {
     padding: 20px;
     border-bottom: 1px solid #eee;
+    background: linear-gradient(135deg, #0066cc, #0052a3);
+    color: white;
 }
 
+.chat-header h1 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+}
+
+.chat-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+
+/* Messages section */
 .chat-messages {
     padding: 20px;
+    overflow-y: auto;
+    max-height: 70vh;
 }
 
+/* Individual message */
 .message {
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #eee;
-    border-radius: 4px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.message:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .message-header {
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .author {
-    font-weight: bold;
-    color: #333;
+    font-weight: 600;
+    color: #0066cc;
 }
 
 .timestamp {
     color: #666;
     font-size: 0.9em;
-    margin-left: 10px;
 }
 
 .message-content {
-    line-height: 1.5;
+    line-height: 1.6;
+    color: #333;
+    word-wrap: break-word;
 }
 
 .hashtags {
@@ -60,34 +95,130 @@ body {
     color: #0066cc;
     text-decoration: none;
     font-size: 0.9em;
-    display: block;
+    display: inline-block;
     margin-top: 5px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background: #f0f7ff;
+    transition: background 0.2s ease;
 }
+
+.expand-link:hover {
+    background: #e0f0ff;
+}
+
+/* Form section */
 .message-form {
     padding: 20px;
     border-top: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.message-form textarea,
+.message-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
 }
 
 .message-form textarea {
-    width: 100%;
     min-height: 100px;
-    margin-bottom: 10px;
-    padding: 8px;
+    resize: vertical;
 }
 
-.message-form input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
+.message-form textarea:focus,
+.message-form input:focus {
+    outline: none;
+    border-color: #0066cc;
 }
 
 .message-form button {
-    padding: 8px 16px;
+    width: 100%;
+    padding: 12px;
     background: #0066cc;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.message-form button:hover {
+    background: #0052a3;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .chat-container {
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .message {
+        padding: 12px;
+    }
+
+    .message-form textarea,
+    .message-form input,
+    .message-form button {
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #fff;
+    }
+
+    .chat-container {
+        background-color: #2d2d2d;
+    }
+
+    .message {
+        background: #333;
+        border-color: #444;
+    }
+
+    .message-content {
+        color: #eee;
+    }
+
+    .timestamp {
+        color: #999;
+    }
+
+    .message-form {
+        background: #262626;
+    }
+
+    .message-form textarea,
+    .message-form input {
+        background: #333;
+        border-color: #444;
+        color: #fff;
+    }
+
+    .expand-link {
+        background: #333;
+    }
+
+    .expand-link:hover {
+        background: #444;
+    }
 }
 
 /* end chat_style.css ; marker comment, please do not remove */
