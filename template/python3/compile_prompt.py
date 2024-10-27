@@ -3,6 +3,7 @@
 
 import os
 import sys
+import re
 
 def read_file(file_path):
     encodings = ['utf-8', 'latin-1']
@@ -17,7 +18,27 @@ def read_file(file_path):
             raise
     raise UnicodeDecodeError(f"Could not read {file_path} with any supported encoding")
 
+def has_marker_comments(content, file_path):
+    # Define patterns for different comment styles
+    patterns = {
+        'hash': (f"# begin {file_path} ; marker comment, please do not remove",
+                f"# end {os.path.basename(file_path)} ; marker comment, please do not remove"),
+        'c_style': (f"/\\* begin {file_path} ; marker comment, please do not remove \\*/",
+                   f"/\\* end {os.path.basename(file_path)} ; marker comment, please do not remove \\*/"),
+        'html': (f"<!-- begin {file_path} ; marker comment, please do not remove -->",
+                f"<!-- end {os.path.basename(file_path)} ; marker comment, please do not remove -->")
+    }
+
+    for begin_pattern, end_pattern in patterns.values():
+        if (re.search(begin_pattern, content[:500]) and  # Check only first 500 chars for begin
+            re.search(end_pattern, content[-500:])):     # Check only last 500 chars for end
+            return True
+    return False
+
 def format_file_content(file_path, content):
+    if has_marker_comments(content, file_path):
+        return content
+
     ext = os.path.splitext(file_path)[1].lower()
 
     if ext in ['.py', '.sh', '.rb', '.pl']:
