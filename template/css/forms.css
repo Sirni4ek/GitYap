@@ -1,7 +1,7 @@
 /* begin template/css/forms.css ; marker comment, please do not remove */
 /* Form section */
 .message-form {
-	padding: 10px; /* Reduced from 15px */
+	padding: 10px;
 	border-top: 1px solid #eee;
 	background: #f8f9fa;
 	flex-shrink: 0;
@@ -9,45 +9,130 @@
 	bottom: 0;
 }
 
-.message-form textarea,
-.message-form input {
-	width: 100%;
-	padding: 8px; /* Reduced from 12px */
-	margin-bottom: 8px; /* Reduced from 10px */
-	border: 1px solid #ddd;
-	border-radius: 6px; /* Reduced from 8px */
-	box-sizing: border-box;
-	font-family: inherit;
-	font-size: 14px;
-	transition: border-color 0.2s ease;
+.main-input {
+	position: relative;
+	margin-bottom: 10px;
 }
 
 .message-form textarea {
-	min-height: 60px; /* Reduced from 80px */
-	max-height: 120px; /* Reduced from 150px */
+	width: 100%;
+	padding: 8px;
+	padding-right: 100px; /* Make room for the send button */
+	margin-bottom: 8px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: 14px;
+	min-height: 60px;
+	max-height: 120px;
 	resize: vertical;
 }
 
-.message-form textarea:focus,
-.message-form input:focus {
-	outline: none;
-	border-color: #0066cc;
-}
-
-.message-form button {
-	width: 100%;
-	padding: 8px; /* Reduced from 12px */
+.send-button {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	width: auto;
+	padding: 8px 16px;
 	background: #0066cc;
 	color: white;
 	border: none;
-	border-radius: 6px; /* Reduced from 8px */
+	border-radius: 6px;
 	cursor: pointer;
-	font-size: 14px; /* Reduced from 16px */
+	font-size: 14px;
 	font-weight: 600;
 	transition: background 0.2s ease;
 }
 
-.message-form button:hover {
+.send-button:hover {
 	background: #0052a3;
+}
+
+.optional-fields {
+	display: none;
+	margin-bottom: 10px;
+}
+
+.optional-fields.visible {
+	display: block;
+}
+
+.optional-fields input {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 8px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: 14px;
+}
+
+.form-controls {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+
+.form-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 6px 12px;
+	background: #f0f0f0;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 13px;
+	color: #666;
+	transition: all 0.2s ease;
+}
+
+.form-toggle:hover {
+	background: #e0e0e0;
+	color: #333;
+}
+
+.form-toggle.active {
+	background: #e6f0ff;
+	color: #0066cc;
+	border-color: #0066cc;
+}
+
+.toggle-icon {
+	font-size: 16px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+	.message-form {
+		background: #262626;
+		border-color: #333;
+	}
+
+	.message-form textarea,
+	.optional-fields input {
+		background: #333;
+		border-color: #444;
+		color: #fff;
+	}
+
+	.form-toggle {
+		background: #333;
+		border-color: #444;
+		color: #999;
+	}
+
+	.form-toggle:hover {
+		background: #444;
+		color: #fff;
+	}
+
+	.form-toggle.active {
+		background: #1a3d66;
+		color: #66b3ff;
+		border-color: #0066cc;
+	}
 }
 /* end forms.css ; marker comment, please do not remove */

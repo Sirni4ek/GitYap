@@ -2,12 +2,14 @@
 <form id="post-form" method="POST" onsubmit="return postMessage(event)">
 	<div class="main-input">
 		<textarea name="content" required placeholder="Type your message..."></textarea>
-		<button type="submit">Send</button>
+		<button type="submit" class="send-button">Send Message</button>
 	</div>
-	<div class="expanded-fields">
-		<input type="text" name="author" required placeholder="Your name">
+	<div class="optional-fields">
+		<input type="text" name="author" placeholder="Your name">
 		<input type="text" name="tags" placeholder="Tags (space separated)">
 		<input type="hidden" name="reply_to">
+	</div>
+	<div class="form-controls">
 	</div>
 </form>
 <!-- end chat_message_form.html ; marker comment, please do not remove -->
