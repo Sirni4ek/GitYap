@@ -36,12 +36,35 @@ def compile_prompt(template_dir='template'):
         if not os.path.exists(template_dir):
             raise FileNotFoundError(f"Template directory '{template_dir}' not found")
 
+        # Read template files
+        prefix_path = os.path.join(template_dir, 'txt', 'prompt_prefix.txt')
+        suffix_path = os.path.join(template_dir, 'txt', 'prompt_suffix.txt')
+        todo_path = os.path.join(template_dir, 'txt', 'todo.txt')
+
+        try:
+            prefix_content = read_file(prefix_path) if os.path.exists(prefix_path) else ""
+            suffix_content = read_file(suffix_path) if os.path.exists(suffix_path) else ""
+            todo_content = read_file(todo_path) if os.path.exists(todo_path) else ""
+        except Exception as e:
+            print(f"Error reading template files: {e}", file=sys.stderr)
+            raise
+
         output = []
+
+        # Add prefix if it exists
+        if prefix_content:
+            output.append(prefix_content)
+
+        # Add todo content if it exists
+        if todo_content:
+            output.append("\nTODO List:")
+            output.append(todo_content)
+            output.append("\nSource Files:")
 
         # Walk through the template directory
         for root, dirs, files in os.walk(template_dir):
             for file in sorted(files):
-                if file.startswith('.'):
+                if file.startswith('.') or file in ['prompt_prefix.txt', 'prompt_suffix.txt', 'todo.txt']:
                     continue
 
                 file_path = os.path.join(root, file)
@@ -55,10 +78,13 @@ def compile_prompt(template_dir='template'):
                     print(f"Error processing {file_path}: {e}", file=sys.stderr)
                     raise
 
+        # Add suffix if it exists
+        if suffix_content:
+            output.append(suffix_content)
+
         # Write to prompt.txt
         try:
             with open('prompt.txt', 'w', encoding='utf-8') as f:
-                f.write("Please review my relatively small codebase for faults and discrepancies that would prevent the basic functionality from working.\n\n")
                 f.write('\n'.join(output))
 
             print(f"Prompt compiled to prompt.txt")

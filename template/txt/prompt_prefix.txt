@@ -1,0 +1,6 @@
+Please review the codebase below for any obvious problems that would prevent it from working.
+If there are no obvious issues, then please review the todo list provided.
+Choose ONE (1) item from the todo list either by finding the easiest to implement, or rolling the dice.
+Implement the chosen todo list item after deeply thinking about the simplest way to do it.
+When outputting code, please retain the marker comments and any other comments.
+Thank you for your help, it is much appreciated.
