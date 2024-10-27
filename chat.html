@@ -1,0 +1,224 @@
+<!-- begin template/html/chat_page.html ; marker comment, please do not remove -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timble Chat</title>
+    <meta charset="UTF-8">
+    <style>
+        /* begin template/css/chat_style.css ; marker comment, please do not remove */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+
+.chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chat-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.chat-messages {
+    padding: 20px;
+}
+
+.message {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.message-header {
+    margin-bottom: 10px;
+}
+
+.author {
+    font-weight: bold;
+    color: #333;
+}
+
+.timestamp {
+    color: #666;
+    font-size: 0.9em;
+    margin-left: 10px;
+}
+
+.message-content {
+    line-height: 1.5;
+}
+
+.hashtags {
+    margin-top: 10px;
+    color: #0066cc;
+    font-size: 0.9em;
+}
+
+.expand-link {
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 0.9em;
+    display: block;
+    margin-top: 5px;
+}
+.message-form {
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.message-form textarea {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+    padding: 8px;
+}
+
+.message-form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.message-form button {
+    padding: 8px 16px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* end chat_style.css ; marker comment, please do not remove */
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Timble Chat</h1>
+            <p>Messages: 4 | Last updated: 2024-10-27 05:25:12</p>
+        </div>
+        <div class="chat-messages">
+            <!-- begin template/html/chat_message.html ; marker comment, please do not remove -->
+<div class="message">
+    <div class="message-header">
+        <span class="author">b</span>
+        <span class="timestamp">2024-10-27 05:25:12</span>
+    </div>
+    <div class="message-content">
+        a
+
+#c
+        
+        <a href="#" class="expand-link" data-message-id="0"></a>
+    </div>
+    <div class="hashtags">#c</div>
+</div>
+<!-- end chat_message.html ; marker comment, please do not remove --><!-- begin template/html/chat_message.html ; marker comment, please do not remove -->
+<div class="message">
+    <div class="message-header">
+        <span class="author">asdfads</span>
+        <span class="timestamp">2024-10-27 05:25:07</span>
+    </div>
+    <div class="message-content">
+        asdfasdf
+
+#asdfadsf
+        
+        <a href="#" class="expand-link" data-message-id="1"></a>
+    </div>
+    <div class="hashtags">#asdfadsf</div>
+</div>
+<!-- end chat_message.html ; marker comment, please do not remove --><!-- begin template/html/chat_message.html ; marker comment, please do not remove -->
+<div class="message">
+    <div class="message-header">
+        <span class="author">asfdda</span>
+        <span class="timestamp">2024-10-27 05:24:57</span>
+    </div>
+    <div class="message-content">
+        thanks
+
+#asdfads
+        
+        <a href="#" class="expand-link" data-message-id="2"></a>
+    </div>
+    <div class="hashtags">#asdfads</div>
+</div>
+<!-- end chat_message.html ; marker comment, please do not remove --><!-- begin template/html/chat_message.html ; marker comment, please do not remove -->
+<div class="message">
+    <div class="message-header">
+        <span class="author">asdfadsfa</span>
+        <span class="timestamp">2024-10-27 05:24:49</span>
+    </div>
+    <div class="message-content">
+        adsfadsf
+
+#asdfadsf
+        
+        <a href="#" class="expand-link" data-message-id="3"></a>
+    </div>
+    <div class="hashtags">#asdfadsf</div>
+</div>
+<!-- end chat_message.html ; marker comment, please do not remove -->
+        </div>
+        <div class="message-form">
+            <!-- begin template/html/chat_message_form.html ; marker comment, please do not remove -->
+<form id="post-form" method="POST" onsubmit="return postMessage(event)">
+	<textarea name="content" required placeholder="Type your message..."></textarea>
+	<input type="text" name="author" required placeholder="Your name">
+	<input type="text" name="tags" placeholder="Tags (space separated)">
+	<button type="submit">Send</button>
+</form>
+<!-- end chat_message_form.html ; marker comment, please do not remove -->
+        </div>
+    </div>
+<script>/* begin template/js/chat.js ; marker comment, please do not remove */
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.expand-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var messageId = this.getAttribute('data-message-id');
+            var fullMessage = document.getElementById('full-message-' + messageId);
+            if (fullMessage) {
+                fullMessage.style.display = 'block';
+                this.style.display = 'none';
+            }
+        });
+    });
+});
+async function postMessage(event) {
+    event.preventDefault();
+    const form = event.target;
+    const data = {
+        content: form.content.value,
+        author: form.author.value,
+        tags: form.tags.value.split(' ').filter(t => t).map(t => t.startsWith('#') ? t : '#' + t)
+    };
+
+    try {
+        const response = await fetch('/post', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) throw new Error(await response.text());
+        
+        form.reset();
+        window.location.reload();
+    } catch (error) {
+        alert('Error posting message: ' + error.message);
+    }
+    return false;
+}
+/* end chat.js ; marker comment, please do not remove */</script></body>
+</html>
+<!-- end chat_page.html ; marker comment, please do not remove -->
