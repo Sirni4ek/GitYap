@@ -1,8 +1,8 @@
 Messages should save, but new messages are not being displayed. Fix this issue. (done)
 
-In start_server if port is already in use, it should try the next port.
+In start_server if port is already in use, it should try the next port. (done)
 
-Priority: compile_prompt.py should list a summary of all the files, including line counts, to make it easier for the agent to see which files may need to be refactored or split up.
+Priority: compile_prompt.py should list a summary of all the files, including line counts, to make it easier for the agent to see which files may need to be refactored or split up. (done)
 
 Make the output HTML mobile-friendly and modern-looking, while retaining backwards compatibility. (done)
 
