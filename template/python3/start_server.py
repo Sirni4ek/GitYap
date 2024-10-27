@@ -37,8 +37,8 @@ MIME_TYPES = {
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 	def __init__(self, *args, **kwargs):
-		self.directory = kwargs.pop('directory', os.getcwd())
-		super().__init__(*args, directory=self.directory, **kwargs)
+		self.directory = kwargs.get('directory', os.getcwd())
+		super().__init__(*args, **kwargs)
 
 	def do_GET(self):
 		"""Handle GET requests"""
@@ -262,26 +262,26 @@ def find_available_port(start_port: int) -> int:
 	return port
 
 def run_server(port: int, directory: str) -> bool:
-    """Run the HTTP server"""
-    os.chdir(directory)
-    handler = CustomHTTPRequestHandler
+	"""Run the HTTP server"""
+	os.chdir(directory)
+	handler = CustomHTTPRequestHandler
 
-    while port < 65535:  # Maximum valid port number
-        try:
-            with socketserver.TCPServer(("", port), handler) as httpd:
-                print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
-                httpd.serve_forever()
-                return True
-        except OSError as e:
-            if e.errno == 98:  # Address already in use
-                print(f"Port {port} is already in use, trying port {port + 1}...")
-                port += 1
-            else:
-                print(f"Error starting server: {e}")
-                return False
+	while port < 65535:  # Maximum valid port number
+		try:
+			with socketserver.TCPServer(("", port), handler) as httpd:
+				print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
+				httpd.serve_forever()
+				return True
+		except OSError as e:
+			if e.errno == 98:  # Address already in use
+				print(f"Port {port} is already in use, trying port {port + 1}...")
+				port += 1
+			else:
+				print(f"Error starting server: {e}")
+				return False
 
-    print("No available ports found")
-    return False
+	print("No available ports found")
+	return False
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Run a simple HTTP server.")
