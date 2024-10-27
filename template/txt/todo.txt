@@ -1,1 +1,49 @@
-Make the output HTML mobile-friendly and modern-looking, while retaining backwards compatibility.
+Messages should save, but new messages are not being displayed. Fix this issue. (done)
+
+In start_server if port is already in use, it should try the next port.
+
+Priority: compile_prompt.py should list a summary of all the files, including line counts, to make it easier for the agent to see which files may need to be refactored or split up.
+
+Make the output HTML mobile-friendly and modern-looking, while retaining backwards compatibility. (done)
+
+Improve index.html and ensure it's written to the home directory from template directory. (done)
+
+Add logging of messages to the git repository and synchronizing with GitHub.
+- Suggest ways to implement live updates using GitHub Actions or other methods.
+
+Figure out a testing strategy for the codebase and implement it.
+- Suggest ways to implement unit tests, integration tests, and end-to-end tests.
+
+Add message search functionality to chat.html (done)
+
+Implement user authentication and profiles
+
+Add support for file attachments in messages
+
+Add real-time updates using WebSocket
+
+Implement message threading/replies
+
+Add message reactions/emoji support
+
+Add message editing and deletion
+
+Implement message categories/channels
+
+Add user mentions and notifications
+
+Implement message formatting (markdown support)
+
+Add message pinning functionality
+
+Implement message bookmarks
+
+Add message statistics and analytics
+
+Implement message moderation tools
+
+Add support for multiple languages (i18n)
+
+Write a sweeper/linter script that ensures all files have marker comments
+- For Python files, also ensure indentation is correct and consistent
+
