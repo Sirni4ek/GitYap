@@ -1,177 +1,260 @@
-template/css/base.css:
-Classes: .chat-container
-Tags: body
-Purpose: Defines core layout and styling including container dimensions, basic typography, and background colors
+Python Codebase Outline:
 
-template/css/forms.css:
-Classes: .message-form, .main-input, .send-button, .optional-fields, .form-controls, .form-toggle, .toggle-icon
-Tags: textarea, input, button
-Purpose: Handles all form-related styling including the message input area, buttons, and optional fields
+chat.html.py:
+- Main purpose: Generates HTML chat interface
+- Key functions:
+  - generate_chat_html(): Creates chat page with messages
+  - process_file(): Processes message files
+  - extract_metadata(): Gets author/hashtags from messages
+  - get_available_channels(): Lists chat channels
+- Dependencies: os, re, datetime, chardet
+- Used by: http_handler.py for serving chat pages
 
-template/css/header.css:
-Classes: .chat-header, .search-section
-Tags: h1, p, #message-search
-Purpose: Styles the header section and search functionality
-
-template/css/messages.css:
-Classes: .chat-messages, .message, .message-header, .author, .timestamp, .message-content, .hashtags
-Tags: none specific
-Purpose: Styles message display including individual messages, author info, timestamps and hashtags
-
-template/css/responsive.css:
-Classes: .chat-container, .message, .message-form, .message-content, .timestamp, .expand-link, .search-section, .message-highlight, .reply-button, .reply-to
-Tags: body, textarea, input, button
-Purpose: Handles mobile responsiveness and dark mode styling across all components
-
-
-template/html/chat_message.html
-- Template for individual chat message display
-- Structure:
-  - Message container div with reply class support
-  - Message header with author
-  - Message content section with full/partial content toggle
-  - Hashtags section
-  - Reply button with onclick handler
-- Key features: Reply functionality, expandable content, hashtag display
-
-template/html/chat_message_form.html
-- Template for message input form
-- Structure:
-  - Form with POST method and postMessage event handler
-  - Main input section with textarea
-  - Optional fields section (author, tags)
-  - Hidden reply_to field
-  - Form controls section
-- Key features: Message posting, author customization, tagging, reply support
-
-template/html/chat_page.html
-- Main chat interface template
-- Structure:
-  - HTML5 doctype and head with meta tags
-  - CSS imports (base, header, forms, messages, responsive)
-  - Chat container with header showing title and stats
-  - Search section
-  - Messages display area
-  - Message form section
-- Key features: Message display, search functionality, responsive design
-
-template/html/index.html
-- Landing page template
-- Structure:
-  - HTML5 doctype and head with meta tags
-  - Embedded CSS with responsive and dark mode support
-  - Container with welcome message
-  - Navigation menu (Chat and Logs)
-  - Feature description list
-- Styling:
-  - Responsive layout
-  - Dark mode support
-  - Modern UI elements
-  - Mobile-friendly design
-- Key features: Navigation, responsive design, dark mode, clean UI
-
-
-template/js/chat.js
-- Main functionality for chat interface
-- Event Listeners and Initialization:
-  - DOMContentLoaded: Sets up form controls and search functionality
-  - Search input with debounced filtering of messages
-  - Escape key handler to clear search
-Functions:
-- initializeFormControls():
-  - Sets up form UI elements
-  - Manages optional fields visibility
-  - Handles author name persistence
-  - Implements form toggle buttons
-  - Saves user preferences to localStorage
-- postMessage(event):
-  - Handles message submission
-  - Processes author name and tags
-  - Makes POST request to /post endpoint
-  - Handles form clearing and page reload
-  - Error handling for failed submissions
-- debounce(func, wait):
-  - Utility function for rate-limiting function calls
-  - Used for search functionality
-- replyToMessage(messageId, author):
-  - Handles reply functionality
-  - Sets up reply_to field
-  - Adds @mention to message content
-  - Focuses textarea
-
-
-template/python3/chat.html.py:
-- Main script for generating chat HTML interface
-- Functions:
-  - debug_print(): Prints debug messages if DEBUG is True
-  - read_file(): Reads file content with encoding detection
-  - extract_metadata(): Gets author and hashtags from message content
-  - truncate_message(): Truncates messages to specified length
-  - process_file(): Processes a single message file and extracts metadata
-  - generate_chat_html(): Main function to generate chat interface HTML
-- Handles message threading/replies
-- Supports message truncation with expand/collapse
-- Uses HTML templates for page layout
-
-template/python3/commit_files.py:
-- Script for committing text files to Git repository
-- Functions:
-  - calculate_file_hash(): Generates SHA256 hash of file
-  - extract_metadata(): Gets metadata from file content
+commit_files.py:
+- Main purpose: Git integration for message storage
+- Key functions:
+  - commit_text_files(): Commits messages to git
+  - calculate_file_hash(): Creates file checksums
+  - extract_metadata(): Gets message metadata
   - store_metadata(): Saves metadata as JSON
-  - run_git_command(): Executes Git commands
-  - commit_text_files(): Main function to commit files
-- Handles file metadata extraction and storage
-- Manages Git operations for committing files
+- Dependencies: git, os, subprocess
+- Used by: http_handler.py for message persistence
 
-template/python3/compile_prompt.py:
-- Script for compiling prompt files
-- Functions:
-  - get_file_stats(): Gets line count and size stats
-  - format_size(): Formats byte sizes human-readable
-  - read_file(): Reads file with encoding detection
-  - has_marker_comments(): Checks for marker comments
-  - format_file_content(): Formats file content with markers
-  - compile_prompt(): Main function to compile prompts
-- Handles file statistics and formatting
-- Manages prompt compilation process
+compile_prompt.py:
+- Main purpose: Generates prompts for AI model
+- Key functions:
+  - compile_prompt(): Creates prompt files
+  - get_file_stats(): Analyzes file metrics
+  - format_file_content(): Formats code for prompts
+- Dependencies: os, re
+- Used by: Development tools
 
-template/python3/file_utils.py:
-- Utility class for file operations
-- Class FileUtils:
-  - read_file_safe(): Safely reads files with encoding detection
-  - write_file_safe(): Safely writes files with directory creation
-- Provides common file operation functions
+config.py:
+- Main purpose: Configuration constants
+- Defines:
+  - SCRIPT_TYPES: Supported script extensions
+  - INTERPRETERS: Script interpreter mapping
+  - MIME_TYPES: File type mappings
+- Used by: http_handler.py, server.py
 
-template/python3/log.html.py:
-- Script for generating HTML log reports
-- Functions:
-  - read_file(): Reads file content
-  - extract_metadata(): Gets metadata from content
-  - generate_html(): Main function to generate HTML report
-- Handles Git repository message files
-- Generates HTML reports of messages
+file_operations.py:
+- Main purpose: File system operations
+- Key functions:
+  - setup_static_files(): Copies static assets
+  - find_scripts(): Locates script files
+- Dependencies: os, shutil
+- Used by: http_handler.py
 
-template/python3/make_outliner_prompt.py:
-- Script for creating outline prompts
-- Functions:
-  - group_files_by_type(): Groups files by extension
-  - get_file_stats(): Gets file statistics
-  - format_size(): Formats byte sizes
-  - read_file(): Reads files with encoding detection
-  - compile_prompt(): Main function to compile outlines
-- Creates structured outlines of codebase
+file_utils.py:
+- Main purpose: File handling utilities
+- Key functions:
+  - read_file_safe(): Safe file reading
+  - write_file_safe(): Safe file writing
+- Dependencies: os, chardet
+- Used by: Multiple files for file I/O
 
-template/python3/start_server.py:
-- HTTP server implementation
-- Class CustomHTTPRequestHandler:
-  - setup_static_files(): Sets up static file serving
+http_handler.py:
+- Main purpose: HTTP request handling
+- Key classes:
+  - CustomHTTPRequestHandler: Main request handler
+- Key methods:
   - do_GET(): Handles GET requests
   - do_POST(): Handles POST requests
-  - Various helper methods for file serving and processing
-- Functions:
+  - handle_chat_post(): Processes chat messages
+- Dependencies: http.server
+- Core server component
+
+log.html.py:
+- Main purpose: Generates log reports
+- Key functions:
+  - generate_html(): Creates log page
+  - extract_metadata(): Gets message metadata
+- Dependencies: git, gnupg
+- Used by: http_handler.py for logs
+
+make_outliner_prompt.py:
+- Main purpose: Creates AI prompts
+- Similar to compile_prompt.py but for outlines
+- Dependencies: os, re
+- Used by: Development tools
+
+server.py:
+- Main purpose: HTTP server implementation
+- Key functions:
+  - run_server(): Starts HTTP server
+- Dependencies: socketserver
+- Entry point for web server
+
+start_server.py:
+- Main purpose: Server startup script
+- Key functions:
+  - main(): Parses args and starts server
+- Dependencies: argparse
+- Main executable
+
+utils.py:
+- Main purpose: Utility functions
+- Key functions:
   - is_port_in_use(): Checks port availability
   - find_available_port(): Finds open port
-  - run_server(): Main server function
-- Handles file serving, chat messages, and API endpoints
-- Manages static files and templates
+  - generate_title(): Creates message titles
+- Used by: Multiple files
+
+CSS Outline:
+
+template/css/base.css:
+- Core layout and typography styles
+- Classes: .chat-container
+- Tags: body
+- Defines base container structure and responsive layout
+- Dependencies: Used by all templates
+
+template/css/forms.css:
+- Message input form styling
+- Classes: .message-form, .main-input, .send-button, .optional-fields, .form-controls, .form-toggle
+- Tags: textarea, input, button
+- Handles form layout, input styling, button states
+- Dark mode support
+- Dependencies: Used by message input components
+
+template/css/header.css:
+- Header and channel navigation styling
+- Classes: .chat-header, .channel-section, .channel-nav, .channel-link, .search-section
+- Tags: h1, p
+- Gradient header background
+- Channel navigation with horizontal scroll
+- Search input styling
+- Dark mode support
+- Dependencies: Used by header and navigation components
+
+template/css/messages.css:
+- Message display and interaction styling
+- Classes: .chat-messages, .message, .message-header, .author, .timestamp, .message-content, .hashtags, .reply-button
+- Message layout, hover effects
+- Reply functionality styling
+- Dependencies: Used by message list components
+
+template/css/responsive.css:
+- Mobile-first responsive design rules
+- Media queries for different screen sizes
+- Dark mode color scheme
+- Classes: Modifies existing component classes for responsive behavior
+- Handles layout changes for mobile devices
+- Dependencies: Applied globally across all components
+
+Key Relationships:
+- base.css provides foundation styles used by all other CSS files
+- All CSS files include dark mode support via media queries
+- responsive.css contains overrides that should be loaded last
+- Forms and messages styling closely integrated for reply functionality
+- Header styles coordinate with channel navigation and search components
+
+HTML Outline:
+
+template/html/chat_message.html:
+- Template for individual chat message display
+- Structure: message container with header, content, hashtags, reply button
+- Dynamic elements: {author}, {content}, {message_id}, {hashtags}, {reply_class}, {reply_to}
+- Dependencies: messages.css for styling, chat.js for reply functionality
+- Used by: chat_page.html
+
+template/html/chat_message_form.html:
+- Template for message input form
+- Components: textarea for message, author input, tags input, hidden fields
+- Dynamic elements: {current_channel}
+- Form submission to /post endpoint
+- Dependencies: forms.css for styling
+- Used by: chat_page.html
+
+template/html/chat_page.html:
+- Main chat interface template
+- Structure: header, channel section, messages area, message form
+- CSS dependencies: base.css, header.css, forms.css, messages.css, responsive.css
+- Dynamic elements: {title}, {message_count}, {current_time}, {channel_nav}, {chat_messages}, {message_form}
+- Includes search functionality
+- Responsive design support
+- Parent template that includes chat_message.html and chat_message_form.html
+
+template/html/index.html:
+- Landing page template
+- Contains embedded CSS styles
+- Features:
+  - Responsive design
+  - Dark mode support
+  - Navigation menu
+  - Welcome message and feature list
+- Links to chat.html and log.html
+- Self-contained styling without external CSS dependencies
+- Mobile-friendly layout
+- Color scheme: blue/white (light mode), dark blue/gray (dark mode)
+
+JavaScript Outline:
+
+template/js/chat.js
+- Main JavaScript file for chat functionality
+- Dependencies: None (vanilla JavaScript)
+- Event Handlers:
+  - DOMContentLoaded: Initializes form controls and search functionality
+  - Form submit handler for message posting
+  - Search input handler with debouncing
+  - Form control toggle handlers
+
+Functions:
+- initializeFormControls()
+  - Sets up form toggle buttons
+  - Manages optional fields visibility
+  - Handles author name persistence in localStorage
+  - Initializes form controls and preferences
+
+- postMessage(event)
+  - Handles message submission
+  - Validates input
+  - Sends POST request to /post endpoint
+  - Manages loading states
+  - Handles success/error responses
+  - Clears form after successful submission
+
+- debounce(func, wait)
+  - Utility function for debouncing function calls
+  - Used for search functionality
+
+- replyToMessage(messageId, author)
+  - Handles reply functionality
+  - Sets reply_to field
+  - Adds @mention to message content
+
+Key Features:
+- Message posting
+- Form field persistence
+- Search functionality
+- Reply system
+- Optional fields toggle
+- Error handling
+- Loading states
+
+DOM Elements Used:
+- #post-form
+- #message-search
+- .message
+- .message-content
+- .author
+- .hashtags
+- .optional-fields
+- .form-controls
+
+Local Storage Usage:
+- showOptionalFields
+- authorName
+
+API Endpoints Used:
+- POST /post
+
+This file would need to be modified for:
+- Adding real-time updates
+- Implementing message editing/deletion
+- Adding reactions/emoji support
+- Adding message threading
+- Implementing file attachments
+- Adding channel support
+- Enhancing search functionality
+
