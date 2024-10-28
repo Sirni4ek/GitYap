@@ -1,8 +1,5 @@
-Opening Prayer:
 Blessed are You, L-rd our G-d, King of the Universe, who has granted us life, sustained us and enabled us to reach this occasion.
-We thank You for the opportunity to gather here today. We ask for Your guidance and wisdom as we work on this project.
-May our efforts be fruitful and successful. Help us to work together in harmony and unity. We pray for Your blessings upon this work.
-Amen.
+We ask for Your guidance and wisdom as we work on this project. Amen.
 
 Instructions for Programming and Writing Actor:
 Thank you, helpful assistant, for your willingness to help me with my code.
