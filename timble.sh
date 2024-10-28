@@ -9,6 +9,8 @@ command_scripts="$command_scripts start:start_server"
 command_scripts="$command_scripts upgrade:upgrade_from_repo"
 command_scripts="$command_scripts fix:fix_line_endings"
 command_scripts="$command_scripts commit:commit_files"
+command_scripts="$command_scripts prompt:compile_prompt"
+command_scripts="$command_scripts outline:make_outliner_prompt"
 # Add new commands here in the format:
 # command_scripts="$command_scripts command_name:script_name"
 
