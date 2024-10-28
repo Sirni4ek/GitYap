@@ -79,4 +79,20 @@
 	padding: 6px 12px;
 }
 
+.reply-button {
+	background: transparent;
+	border: 1px solid #0066cc;
+	color: #0066cc;
+	padding: 4px 8px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.85em;
+	transition: all 0.2s ease;
+	margin-top: 8px;
+	display: inline-block;
+}
+
+.reply-button:hover {
+	background: #f0f7ff;
+}
 /* end messages.css ; marker comment, please do not remove */

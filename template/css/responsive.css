@@ -80,11 +80,15 @@
 	}
 
 	.reply-button {
+		background: transparent;
+		border: 1px solid #66b3ff;
 		color: #66b3ff;
 	}
 
 	.reply-button:hover {
-		background: #1a1a1a;
+		background: #1a3d5c;
+		border-color: #99ccff;
+		color: #99ccff;
 	}
 
 	.reply-to {
