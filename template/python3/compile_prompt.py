@@ -118,6 +118,10 @@ def compile_prompt(template_dir='template'):
 				if file.startswith('.') or file in ['prompt_prefix.txt', 'prompt_suffix.txt', 'todo.txt']:
 					continue
 
+				# exclude .pyc files and __pycache__ directories
+				if file.endswith('.pyc') or '__pycache__' in root:
+					continue
+
 				file_path = os.path.join(root, file)
 				relative_path = os.path.relpath(file_path)
 				stats = get_file_stats(file_path)

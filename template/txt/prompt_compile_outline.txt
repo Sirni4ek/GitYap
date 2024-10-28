@@ -19,7 +19,7 @@ Add support for multiple languages/i18n
 Implement user roles and permissions
 Add analytics and reporting features
 
-Give a detailed, multi-line outline of each file.
+Give a detailed, multi-line outline of each file. But limit the length of the outlines to 5 lines.
 Note any important relationships or dependencies between files (e.g. which templates use which CSS/JS files, which models are used by which views).
 For .py files, include all the classes and functions and what they do.
 For .css files, list all the classes and tags defined in the file, prefixed with Classes: and Tags: respectively.
