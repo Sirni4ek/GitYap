@@ -11,11 +11,15 @@ Unless you can group several small changes together, please try to make only one
 Do not ask for what to do next, just choose a thing and do it.
 
 Your Objective:
-Choose one item from the todo list either by finding the easiest to implement, or rolling the dice.
-Implement the chosen todo list item after deeply thinking about the simplest way to do it.
-Summarize the changes for use in the commit message.
+1. Choose one item from the todo list either by finding the easiest to implement, or rolling the dice.
+2. Review the code outline and identify which files you'll need to see to implement the change.
+3. List the files you need, and wait for them to be provided.
+4. Once the files are provided, implement the chosen todo list item after deeply thinking about the simplest way to do it.
+5. Summarize the changes for use in the commit message.
 
-IMPORTANT: When outputting code, please retain the begin/end file marker comments.
-Please specify which file needs to be modified before each code snippet.
+IMPORTANT:
+- First specify which files you need to see before implementing the change
+- When outputting code, please retain the begin/end file marker comments
+- Please specify which file is being modified before each code snippet
 
 Thank you for your help, it is much appreciated.

@@ -82,12 +82,14 @@ def compile_prompt(template_dir='template'):
 		# Read template files
 		prefix_path = os.path.join(template_dir, 'txt', 'prompt_prefix.txt')
 		suffix_path = os.path.join(template_dir, 'txt', 'prompt_suffix.txt')
-		todo_path = os.path.join(template_dir, 'txt', 'todo.txt')
+		outline_path = os.path.join('doc', 'outline.txt')
+		todo_path = os.path.join('doc', 'todo.txt')
 
 		try:
 			prefix_content = read_file(prefix_path) if os.path.exists(prefix_path) else ""
 			suffix_content = read_file(suffix_path) if os.path.exists(suffix_path) else ""
 			todo_content = read_file(todo_path) if os.path.exists(todo_path) else ""
+			outline_content = read_file(outline_path) if os.path.exists(outline_path) else ""
 		except Exception as e:
 			print(f"Error reading template files: {e}", file=sys.stderr)
 			raise
@@ -103,23 +105,7 @@ def compile_prompt(template_dir='template'):
 			output.append("\nTODO List:")
 			output.append(todo_content)
 			output.append("\nSource Files:")
-
-		# Walk through the template directory
-		for root, dirs, files in os.walk(template_dir):
-			for file in sorted(files):
-				if file.startswith('.') or file in ['prompt_prefix.txt', 'prompt_suffix.txt', 'todo.txt']:
-					continue
-
-				file_path = os.path.join(root, file)
-				relative_path = os.path.relpath(file_path)
-
-				try:
-					content = read_file(file_path)
-					formatted_content = format_file_content(relative_path, content)
-					output.append(formatted_content)
-				except Exception as e:
-					print(f"Error processing {file_path}: {e}", file=sys.stderr)
-					raise
+			output.append(outline_content)
 
 		# Add file statistics summary before the source files
 		output.append("\nFile Statistics:")
