@@ -19,12 +19,46 @@
 	font-size: 14px;
 }
 
+/* Channel section */
+.channel-section {
+	background: #f8f9fa;
+	border-bottom: 1px solid #eee;
+	flex-shrink: 0;
+}
+
+.channel-nav {
+	padding: 10px 15px;
+	display: flex;
+	overflow-x: auto;
+	scrollbar-width: thin;
+	gap: 8px;
+	border-bottom: 1px solid #eee;
+}
+
+.channel-link {
+	padding: 6px 12px;
+	border-radius: 15px;
+	background: #e9ecef;
+	color: #495057;
+	text-decoration: none;
+	font-size: 14px;
+	white-space: nowrap;
+	transition: all 0.2s ease;
+}
+
+.channel-link:hover {
+	background: #dee2e6;
+}
+
+.channel-link.active {
+	background: #0066cc;
+	color: white;
+}
+
 /* Search section */
 .search-section {
 	padding: 8px 15px;
 	background: #f8f9fa;
-	border-bottom: 1px solid #eee;
-	flex-shrink: 0;
 }
 
 #message-search {
@@ -39,5 +73,52 @@
 #message-search:focus {
 	outline: none;
 	border-color: #0066cc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+	.channel-nav {
+		padding: 8px 10px;
+	}
+
+	.channel-link {
+		padding: 4px 10px;
+		font-size: 13px;
+	}
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+	.channel-section {
+		background: #1a1a1a;
+		border-color: #333;
+	}
+
+	.channel-nav {
+		border-color: #333;
+	}
+
+	.channel-link {
+		background: #2d2d2d;
+		color: #e9ecef;
+	}
+
+	.channel-link:hover {
+		background: #3d3d3d;
+	}
+
+	.channel-link.active {
+		background: #0052a3;
+	}
+
+	.search-section {
+		background: #1a1a1a;
+	}
+
+	#message-search {
+		background: #2d2d2d;
+		border-color: #333;
+		color: #fff;
+	}
 }
 /* end header.css ; marker comment, please do not remove */

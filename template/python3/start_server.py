@@ -17,7 +17,8 @@ import subprocess
 import time
 import urllib.parse
 import json
-from datetime import datetime
+import re
+from datetime import datetime, timezone
 from typing import List, Tuple
 import shutil
 from pathlib import Path
@@ -70,10 +71,9 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 		super().__init__(*args, directory=self.directory)
 
 	def do_GET(self):
-		"""Handle GET requests"""
-		# Add handling for CSS files
+		"""Handle GET requests with improved channel validation"""
 		if self.path.startswith('/css/'):
-			self.serve_static_file(self.path[1:])  # Remove leading slash
+			self.serve_static_file(self.path[1:])
 		elif self.path.startswith('/js/'):
 			self.serve_static_file(self.path[1:])
 		elif self.path in ['/', '/index.html']:
@@ -81,21 +81,147 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 			self.serve_static_file('index.html')
 		elif self.path == '/log.html':
 			self.generate_and_serve_report()
+		elif self.path.startswith('/chat/'):
+			# Extract and validate channel name
+			parts = self.path.split('/')
+			if len(parts) != 3:
+				self.send_error(404, "Invalid channel URL")
+				return
+
+			channel = parts[2]
+			if channel.endswith('.html'):
+				channel = channel[:-5]  # Remove .html extension
+
+			# Validate channel name
+			if not self.is_valid_channel_name(channel):
+				self.send_error(400, "Invalid channel name")
+				return
+
+			self.generate_and_serve_chat(channel)
 		elif self.path == '/chat.html':
-			self.generate_and_serve_chat()
-		elif self.path == '/api/github_update':
-			self.trigger_github_update()
+			self.generate_and_serve_chat('general')
 		elif self.path.endswith('.txt'):
 			self.serve_text_file_as_html()
 		else:
-			self.serve_static_file(self.path[1:])
+			self.send_error(404, "File not found")
 
 	def do_POST(self):
 		"""Handle POST requests"""
-		if self.path == '/post':  # Changed from '/chat.html'
+		# Parse URL and query parameters
+		parsed_path = urllib.parse.urlparse(self.path)
+		path = parsed_path.path
+
+		# Handle post to both /post and /chat.html
+		if path in ['/post', '/chat.html']:
 			self.handle_chat_post()
 		else:
 			self.send_error(405, "Method Not Allowed")
+
+	def handle_chat_post(self):
+		"""Handle POST request for chat messages"""
+		try:
+			content_length = int(self.headers.get('Content-Length', 0))
+			if content_length > 1024 * 1024:  # 1MB limit
+				self.send_error(413, "Request entity too large")
+				return
+
+			content_type = self.headers.get('Content-Type', '')
+			print(f"Received Content-Type: {content_type}")  # Debug log
+
+			# Handle both application/json and form submissions
+			if 'application/json' in content_type:
+				# JSON data
+				post_data = self.rfile.read(content_length).decode('utf-8')
+				data = json.loads(post_data)
+			elif 'application/x-www-form-urlencoded' in content_type:
+				# Form data
+				post_data = self.rfile.read(content_length).decode('utf-8')
+				form_data = urllib.parse.parse_qs(post_data)
+				data = {
+					'content': form_data.get('content', [''])[0],
+					'author': form_data.get('author', [''])[0],
+					'tags': form_data.get('tags', [''])[0].split(),
+					'channel': form_data.get('channel', ['general'])[0],
+					'reply_to': form_data.get('reply_to', [''])[0]
+				}
+			else:
+				self.send_error(400, f"Invalid content type: {content_type}. Expected application/json or application/x-www-form-urlencoded")
+				return
+
+			# Validate required fields
+			if not data.get('content', '').strip():
+				self.send_error(400, "Message content is required")
+				return
+
+			# Sanitize and validate input
+			author = html.escape(data.get('author', '').strip())[:50]
+			content = html.escape(data.get('content', '').strip())[:5000]
+			tags = [html.escape(tag.strip())[:30] for tag in data.get('tags', [])][:10]
+			channel = html.escape(data.get('channel', 'general').strip())
+
+			# Validate channel name
+			if not self.is_valid_channel_name(channel):
+				self.send_error(400, "Invalid channel name")
+				return
+
+			# Create message directory if it doesn't exist
+			message_dir = os.path.join(self.directory, 'message', channel)
+			os.makedirs(message_dir, exist_ok=True)
+
+			# Generate timestamp and filename
+			timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+			filename = f"{timestamp}.txt"
+			filepath = os.path.join(message_dir, filename)
+
+			# Write message to file
+			with open(filepath, 'w', encoding='utf-8') as f:
+				f.write(f"Author: {author}\n")
+				f.write(f"Channel: {channel}\n\n")
+				f.write(content)
+				if tags:
+					f.write(f"\n\n{' '.join(tags)}")
+
+			# Force regenerate the chat page for this channel
+			chat_file = f'chat_{channel}.html'
+			if os.path.exists(chat_file):
+				os.remove(chat_file)  # Remove existing file to force regeneration
+			self.run_script('chat.html', '--channel', channel)
+
+			# Redirect back to the chat page
+			self.send_response(303)  # 303 See Other
+			channel_path = f"/chat/{channel}.html"
+			self.send_header('Location', channel_path)
+			self.end_headers()
+
+		except json.JSONDecodeError as e:
+			print(f"JSON decode error: {str(e)}")  # Debug log
+			self.send_error(400, "Bad Request: Invalid JSON")
+		except Exception as e:
+			print(f"Error in handle_chat_post: {str(e)}")  # Debug log
+			self.send_error(500, str(e))
+
+	def generate_and_serve_chat(self, channel='general'):
+		"""Generate and serve the chat page for a specific channel"""
+		output_file = f'chat_{channel}.html'
+
+		# Force regenerate the file
+		if os.path.exists(output_file):
+			os.remove(output_file)
+
+		self.run_script('chat.html', '--channel', channel)
+
+		# Verify the file exists before serving
+		if not os.path.exists(output_file):
+			print(f"Error: Failed to generate {output_file}")
+			self.send_error(500, "Failed to generate chat page")
+			return
+
+		self.serve_static_file(output_file)
+
+	def is_valid_channel_name(self, channel):
+		"""Validate channel name to prevent directory traversal and invalid names"""
+		# Only allow alphanumeric characters, hyphens, and underscores
+		return bool(re.match(r'^[a-zA-Z0-9_-]+$', channel))
 
 	def trigger_github_update(self):
 		"""Trigger GitHub update and run the corresponding script"""
@@ -133,71 +259,22 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 		self.run_script_if_needed('log.html', 'log.html')
 		self.serve_static_file('log.html')
 
-	def generate_and_serve_chat(self):
-		"""Generate and serve the chat page"""
-		self.run_script_if_needed('chat.html', 'chat.html')
-		self.serve_static_file('chat.html')
+	def generate_and_serve_chat(self, channel='general'):
+		"""Generate and serve the chat page for a specific channel"""
+		output_file = f'chat_{channel}.html'
+		self.run_script_if_needed(output_file, 'chat.html', '--channel', channel)
+		self.serve_static_file(output_file)
 
-	def handle_chat_post(self):
-		"""Handle POST request for chat messages"""
-		try:
-			content_length = int(self.headers.get('Content-Length', 0))
-			if content_length > 1024 * 1024:  # 1MB limit
-				self.send_error(413, "Request entity too large")
-				return
-
-			post_data = self.rfile.read(content_length).decode('utf-8')
-			data = json.loads(post_data)
-
-			# Sanitize and validate input
-			author = html.escape(data.get('author', '').strip())[:50]  # Limit author length
-			content = html.escape(data.get('content', '').strip())[:5000]  # Limit content length
-			tags = [html.escape(tag.strip())[:30] for tag in data.get('tags', [])][:10]  # Limit tags
-
-			if not author or not content:
-				self.send_error(400, "Missing required fields")
-				return
-
-			# Create message directory if it doesn't exist
-			message_dir = os.path.join(self.directory, 'message')
-			os.makedirs(message_dir, exist_ok=True)
-
-			# Generate timestamp and filename
-			timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-			filename = f"{timestamp}.txt"
-			filepath = os.path.join(message_dir, filename)
-
-			# Write message to file
-			with open(filepath, 'w', encoding='utf-8') as f:
-				f.write(f"Author: {author}\n\n")
-				f.write(content)
-				if tags:
-					f.write(f"\n\n{' '.join(tags)}")
-
-			# Regenerate chat.html
-			self.run_script('chat.html')
-
-			# Send success response
-			self.send_response(200)
-			self.send_header('Content-type', 'application/json')
-			self.end_headers()
-			self.wfile.write(json.dumps({'status': 'success'}).encode())
-
-		except json.JSONDecodeError:
-			self.send_error(400, "Bad Request: Invalid JSON")
-		except Exception as e:
-			self.send_error(500, str(e))
-
-	def run_script_if_needed(self, output_filename: str, script_name: str):
+	def run_script_if_needed(self, output_filename: str, script_name: str, *args):
 		"""Run a script if the output file doesn't exist or is outdated"""
 		output_filepath = os.path.join(self.directory, output_filename)
 		if not os.path.exists(output_filepath) or \
 		   time.time() - os.path.getmtime(output_filepath) > 60:
 			print(f"Generating {output_filename}...")
-			self.run_script(script_name)
+			self.run_script(script_name, *args)
 
 	def run_script(self, script_name: str, *args):
-		"""Run a script with the appropriate interpreter"""
+		"""Run a script with the appropriate interpreter and arguments"""
 		found_scripts = self.find_scripts(script_name)
 
 		if not found_scripts:
@@ -207,7 +284,10 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 		for script_path, script_type in found_scripts:
 			interpreter = INTERPRETER_MAP.get(script_type)
 			if interpreter:
-				subprocess.run([interpreter, script_path, *args], cwd=self.directory)
+				cmd = [interpreter, script_path]
+				if args:  # Add any additional arguments
+					cmd.extend(str(arg) for arg in args)
+				subprocess.run(cmd, cwd=self.directory)
 
 	def find_scripts(self, script_name: str) -> List[Tuple[str, str]]:
 		"""Find all scripts matching the given name"""

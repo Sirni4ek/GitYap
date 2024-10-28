@@ -21,8 +21,11 @@
 		<h1>{title}</h1>
 		<p>Messages: {message_count} | Updated: {current_time}</p>
 	</div>
-	<div class="search-section">
-		<input type="text" id="message-search" placeholder="Search messages...">
+	<div class="channel-section">
+		{channel_nav}
+		<div class="search-section">
+			<input type="text" id="message-search" placeholder="Search messages...">
+		</div>
 	</div>
 	<div class="chat-messages">
 		{chat_messages}

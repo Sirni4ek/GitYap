@@ -3,6 +3,16 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Initialize form controls
 	initializeFormControls();
 
+	// Add form submit handler
+	const form = document.getElementById('post-form');
+	if (form) {
+		// Remove the inline onsubmit handler and add it here
+		form.addEventListener('submit', async function(event) {
+			event.preventDefault(); // This must happen first
+			await postMessage(event);
+		});
+	}
+
 	// Search functionality
 	const searchInput = document.getElementById('message-search');
 	if (searchInput) {
@@ -44,10 +54,10 @@ function initializeFormControls() {
 	const controls = document.createElement('div');
 	controls.className = 'form-controls';
 	controls.innerHTML = `
-        <button type="button" class="form-toggle" data-field="author">
-            <span class="toggle-icon">Options</span>
-        </button>
-    `;
+		<button type="button" class="form-toggle" data-field="author">
+			<span class="toggle-icon">Options</span>
+		</button>
+	`;
 	form.appendChild(controls);
 
 	// Load saved preferences
@@ -81,43 +91,89 @@ function initializeFormControls() {
 
 async function postMessage(event) {
 	event.preventDefault();
+
 	const form = event.target;
+	if (!form || form.id !== 'post-form') return false;
+
+	// Validate required content
+	const content = form.content.value.trim();
+	if (!content) {
+		alert('Please enter a message');
+		return false;
+	}
 
 	// Get author name, defaulting to "Guest" if empty
-	let author = form.author.value.trim();
-	if (!author) {
-		author = "Guest";
-	}
+	let author = form.author.value.trim() || "Guest";
 
 	// Save author name to localStorage
 	localStorage.setItem('authorName', author);
 
+	// Get channel name from hidden input, default to 'general'
+	const channel = (form.channel.value || 'general').trim()
+		.replace(/[^a-zA-Z0-9_-]/g, ''); // Sanitize channel name
+
 	const data = {
-		content: form.content.value,
+		content: content,
 		author: author,
-		tags: form.tags.value.split(' ').filter(t => t).map(t => t.startsWith('#') ? t : '#' + t),
-		reply_to: form.reply_to?.value || null
+		tags: form.tags.value.split(' ')
+			.filter(t => t)
+			.map(t => t.startsWith('#') ? t : '#' + t),
+		reply_to: form.reply_to?.value || null,
+		channel: channel
 	};
 
 	try {
+		// Show loading state
+		const submitButton = form.querySelector('button[type="submit"]');
+		const originalButtonText = submitButton.textContent;
+		submitButton.textContent = 'Sending...';
+		submitButton.disabled = true;
+
+		// Ensure the Content-Type header is properly set
+		console.log('Sending request with data:', data); // Debug log
 		const response = await fetch('/post', {
 			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
+			headers: {
+				'Content-Type': 'application/json;charset=UTF-8',
+				'Accept': 'application/json'
+			},
 			body: JSON.stringify(data)
 		});
 
-		if (!response.ok) throw new Error(await response.text());
+		console.log('Response status:', response.status); // Debug log
 
-		form.content.value = '';  // Only clear the message content
-		form.tags.value = '';     // Clear tags
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.log('Error response:', errorText); // Debug log
+			throw new Error(errorText);
+		}
 
-		// Don't clear the author name
-		setTimeout(() => {
-			window.location.reload();
-		}, 500);
+		const result = await response.json();
+		console.log('Success response:', result); // Debug log
+
+		// Clear form fields
+		form.content.value = '';
+		form.tags.value = '';
+		form.reply_to.value = '';
+
+		// Reset button state
+		submitButton.textContent = originalButtonText;
+		submitButton.disabled = false;
+
+		// Instead of redirecting, reload the current page
+		window.location.reload();
+
 	} catch (error) {
+		console.error('Error posting message:', error);
 		alert('Error posting message: ' + error.message);
+
+		// Reset button state in case of error
+		if (submitButton) {
+			submitButton.textContent = originalButtonText;
+			submitButton.disabled = false;
+		}
 	}
+
 	return false;
 }
 

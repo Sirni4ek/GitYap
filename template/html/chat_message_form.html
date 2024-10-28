@@ -1,15 +1,12 @@
 <!-- begin template/html/chat_message_form.html ; marker comment, please do not remove -->
-<form id="post-form" method="POST" onsubmit="return postMessage(event)">
-	<div class="main-input">
-		<textarea name="content" required placeholder="Type your message..."></textarea>
-		<button type="submit" class="send-button">Send Message</button>
-	</div>
+<form id="post-form" method="post" action="/post">
+	<textarea name="content" id="message" placeholder="Type your message..." required></textarea>
 	<div class="optional-fields">
 		<input type="text" name="author" placeholder="Your name">
 		<input type="text" name="tags" placeholder="Tags (space separated)">
-		<input type="hidden" name="reply_to">
+		<input type="hidden" name="channel" value="{current_channel}">
+		<input type="hidden" name="reply_to" value="">
 	</div>
-	<div class="form-controls">
-	</div>
+	<button type="submit" class="send-button">Send</button>
 </form>
 <!-- end chat_message_form.html ; marker comment, please do not remove -->
