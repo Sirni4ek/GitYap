@@ -17,12 +17,59 @@ import time
 import random
 import string
 
+from utils import page_cache, git_cache
+
 # Import from local modules
 from config import SCRIPT_TYPES, INTERPRETER_MAP, MIME_TYPES
 from commit_files import commit_text_files
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 	static_files_initialized = False  # Class variable to track initialization
+
+	def generate_and_serve_chat(self, channel='general'):
+		"""Generate and serve the chat page with caching"""
+		cache_key = f'chat_{channel}'
+		cached_content = page_cache.get(cache_key)
+
+		if cached_content:
+			self.send_response(200)
+			self.send_header('Content-type', 'text/html')
+			self.end_headers()
+			self.wfile.write(cached_content.encode('utf-8'))
+			return
+
+		# Check git updates in background
+		self.schedule_git_pull(channel)
+
+		output_file = f'chat_{channel}.html'
+		self.run_script('chat.html', '--channel', channel)
+
+		if os.path.exists(output_file):
+			with open(output_file, 'rb') as f:
+				content = f.read()
+				page_cache.set(cache_key, content.decode('utf-8'))
+				self.send_response(200)
+				self.send_header('Content-type', 'text/html')
+				self.end_headers()
+				self.wfile.write(content)
+		else:
+			self.send_error(500, "Failed to generate chat page")
+
+	def schedule_git_pull(self, channel):
+		"""Schedule git pull in background"""
+		import threading
+		def pull_async():
+			channel_repo_path = os.path.join(self.directory, 'message', channel)
+			if os.path.exists(channel_repo_path):
+				from commit_files import pull_changes
+				if pull_changes(channel_repo_path):
+					# Invalidate cache if pull was successful
+					page_cache.invalidate(f'chat_{channel}')
+					git_cache.invalidate(channel)
+
+		thread = threading.Thread(target=pull_async)
+		thread.daemon = True
+		thread.start()
 
 	@classmethod
 	def setup_static_files(cls, directory):
@@ -100,12 +147,24 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 		else:
 			self.send_error(405, "Method Not Allowed")
 
+	def send_json_response(self, data, status=200):
+		"""Send a JSON response with the specified status code"""
+		response = json.dumps(data)
+		self.send_response(status)
+		self.send_header('Content-Type', 'application/json')
+		self.send_header('Content-Length', len(response.encode('utf-8')))
+		self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+		self.send_header('Pragma', 'no-cache')
+		self.send_header('Expires', '0')
+		self.end_headers()
+		self.wfile.write(response.encode('utf-8'))
+
 	def handle_chat_post(self):
 		"""Handle POST request for chat messages"""
 		try:
 			content_length = int(self.headers.get('Content-Length', 0))
 			if content_length > 1024 * 1024:  # 1MB limit
-				self.send_error(413, "Request entity too large")
+				self.send_json_response({'error': 'Request entity too large'}, status=413)
 				return
 
 			content_type = self.headers.get('Content-Type', '')
@@ -128,12 +187,12 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 					'reply_to': form_data.get('reply_to', [''])[0]
 				}
 			else:
-				self.send_error(400, f"Invalid content type: {content_type}. Expected application/json or application/x-www-form-urlencoded")
+				self.send_json_response({'error': f'Invalid content type: {content_type}'}, status=400)
 				return
 
 			# Validate required fields
 			if not data.get('content', '').strip():
-				self.send_error(400, "Message content is required")
+				self.send_json_response({'error': 'Message content is required'}, status=400)
 				return
 
 			# Sanitize and validate input
@@ -141,12 +200,11 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 			content = html.escape(data.get('content', '').strip())[:5000]
 			tags = [html.escape(tag.strip())[:30] for tag in data.get('tags', [])][:10]
 			channel = html.escape(data.get('channel', 'general').strip())
-			channel_return_to = channel  # Store original channel for redirect
+			channel_post_to = channel  # Store original channel for redirect
 
 			# if channel is 'everything', post to 'general', but return to 'everything'
-			if channel == 'everything':
-				channel = 'general'
-				channel_return_to = 'everything'
+			if channel_post_to == 'everything':
+				channel_post_to = 'general'
 
 			# Validate channel name
 			if not self.is_valid_channel_name(channel):
@@ -165,7 +223,7 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 			# Write message to file
 			with open(filepath, 'w', encoding='utf-8') as f:
 				f.write(f"Author: {author}\n")
-				f.write(f"Channel: {channel}\n\n")
+				#f.write(f"Channel: {channel}\n\n")
 				f.write(content)
 				if tags:
 					f.write(f"\n\n{' '.join(tags)}")
@@ -188,30 +246,49 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 			chat_file = f'chat_{channel}.html'
 			if os.path.exists(chat_file):
 				os.remove(chat_file)  # Remove existing file to force regeneration
+			self.run_script('chat.html', '--channel', channel)
 
-			# If channel != channel_return_to, regenerate both pages
-			if channel != channel_return_to:
-				chat_file_return_to = f'chat_{channel_return_to}.html'
-				if os.path.exists(chat_file_return_to):
-					os.remove(chat_file_return_to)
-
-			self.run_script('chat.html', '--channel', channel_return_to)
-
-			# Redirect back to the chat page
-			self.send_response(303)  # 303 See Other
-			channel_path = f"/chat/{channel_return_to}.html"
-			self.send_header('Location', channel_path)
-			self.end_headers()
+			# Send JSON response instead of redirect
+			self.send_json_response({
+				'status': 'success',
+				'message': 'Message posted successfully',
+				'redirect': f"/chat/{channel}.html"
+			})
 
 		except json.JSONDecodeError as e:
-			print(f"JSON decode error: {str(e)}")  # Debug log
-			self.send_error(400, "Bad Request: Invalid JSON")
+			self.send_json_response({'error': f'Invalid JSON: {str(e)}'}, status=400)
 		except Exception as e:
-			print(f"Error in handle_chat_post: {str(e)}")  # Debug log
-			self.send_error(500, str(e))
+			self.send_json_response({'error': str(e)}, status=500)
+
+	def pull_channel_updates(self):
+		"""Pull updates for the current channel from remote repository"""
+		return # doesn't perform well yet #todo
+		try:
+			# Extract channel name from path
+			parts = self.path.split('/')
+			if len(parts) != 3:
+				return
+
+			channel = parts[2]
+			if channel.endswith('.html'):
+				channel = channel[:-5]
+
+			# Get the channel repository path
+			channel_repo_path = os.path.join(self.directory, 'message', channel)
+			if os.path.exists(channel_repo_path):
+				from commit_files import pull_changes
+				pull_changes(channel_repo_path)
+		except Exception as e:
+			print(f"Error pulling updates for channel: {str(e)}")
 
 	def generate_and_serve_chat(self, channel='general'):
 		"""Generate and serve the chat page for a specific channel"""
+		# Pull updates before generating chat page #todo
+		#channel_repo_path = os.path.join(self.directory, 'message', channel)
+		#if os.path.exists(channel_repo_path):
+			#from commit_files import pull_changes
+			#pull_changes(channel_repo_path)
+
 		output_file = f'chat_{channel}.html'
 
 		# Force regenerate the file
@@ -268,12 +345,6 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 		"""Generate and serve the log report"""
 		self.run_script_if_needed('log.html', 'log.html')
 		self.serve_static_file('log.html')
-
-	def generate_and_serve_chat(self, channel='general'):
-		"""Generate and serve the chat page for a specific channel"""
-		output_file = f'chat_{channel}.html'
-		self.run_script_if_needed(output_file, 'chat.html', '--channel', channel)
-		self.serve_static_file(output_file)
 
 	def run_script_if_needed(self, output_filename: str, script_name: str, *args):
 		"""Run a script if the output file doesn't exist or is outdated"""

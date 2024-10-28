@@ -1,17 +1,55 @@
 /* begin template/js/chat.js ; marker comment, please do not remove */
+
+class ChatClient {
+	constructor() {
+		this.ws = null;
+		this.connect();
+		this.setupReconnection();
+	}
+
+	connect() {
+		const wsPort = parseInt(window.location.port) + 1;
+		this.ws = new WebSocket(`ws://localhost:${wsPort}`);
+
+		this.ws.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			if (data.type === 'new_message') {
+				this.handleNewMessage(data.message);
+			} else if (data.type === 'update_required') {
+				this.refreshMessages();
+			}
+		};
+	}
+
+	setupReconnection() {
+		this.ws.onclose = () => {
+			console.log('WebSocket closed, reconnecting...');
+			setTimeout(() => this.connect(), 1000);
+		};
+	}
+
+	handleNewMessage(message) {
+		// Insert new message into DOM
+		const messagesContainer = document.querySelector('.chat-messages');
+		messagesContainer.insertAdjacentHTML('afterbegin', message);
+	}
+
+	refreshMessages() {
+		// Reload messages without full page refresh
+		fetch(window.location.href)
+			.then(response => response.text())
+			.then(html => {
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(html, 'text/html');
+				const newMessages = doc.querySelector('.chat-messages');
+				document.querySelector('.chat-messages').innerHTML = newMessages.innerHTML;
+			});
+	}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	// Initialize form controls
 	initializeFormControls();
-
-	// Add form submit handler
-	const form = document.getElementById('post-form');
-	if (form) {
-		// Remove the inline onsubmit handler and add it here
-		form.addEventListener('submit', async function(event) {
-			event.preventDefault(); // This must happen first
-			await postMessage(event);
-		});
-	}
 
 	// Search functionality
 	const searchInput = document.getElementById('message-search');
@@ -42,6 +80,72 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 	}
+	window.chatClient = new ChatClient();
+	// if (form) {
+	// 	// Remove the inline onsubmit handler and add it here
+	// 	form.addEventListener('submit', async function(event) {
+	// 		event.preventDefault(); // This must happen first
+	// 		await postMessage(event);
+	// 	});
+	// }
+
+	const form = document.getElementById('post-form');
+	if (form) {
+		console.log('Found post form'); // Debug log
+
+		form.addEventListener('submit', function(event) {
+			event.preventDefault(); // This is crucial - stop the default form submission
+			console.log('Form submission intercepted'); // Debug log
+
+			const formData = new FormData(form);
+			const data = {};
+			formData.forEach((value, key) => {
+				data[key] = value;
+			});
+
+			// Show loading state
+			const submitButton = form.querySelector('button[type="submit"]');
+			const originalText = submitButton.textContent;
+			submitButton.disabled = true;
+			submitButton.textContent = 'Sending...';
+
+			fetch('/post', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data)
+			})
+				.then(response => {
+					console.log('Response received:', response); // Debug log
+					return response.json();
+				})
+				.then(data => {
+					console.log('Processed data:', data); // Debug log
+					if (data.error) {
+						throw new Error(data.error);
+					}
+					// Clear the form
+					form.reset();
+
+					// Redirect to the chat page
+					if (data.redirect) {
+						window.location.href = data.redirect;
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error); // Debug log
+					alert('Error posting message: ' + error.message);
+				})
+				.finally(() => {
+					// Reset button state
+					submitButton.disabled = false;
+					submitButton.textContent = originalText;
+				});
+		});
+	} else {
+		console.log('Post form not found'); // Debug log
+	}
 	document.getElementById('message').focus();
 });
 
@@ -53,11 +157,12 @@ function initializeFormControls() {
 	// Add toggle buttons
 	const controls = document.createElement('div');
 	controls.className = 'form-controls';
-	controls.innerHTML = `
-		<button type="button" class="form-toggle" data-field="author">
-			<span class="toggle-icon">Options</span>
-		</button>
-	`;
+	controls.innerHTML = '';
+	// controls.innerHTML = `
+	// 	<button type="button" class="form-toggle" data-field="author">
+	// 		<span class="toggle-icon">Options</span>
+	// 	</button>
+	// `;
 	form.appendChild(controls);
 
 	// Load saved preferences
@@ -89,92 +194,53 @@ function initializeFormControls() {
 	});
 }
 
-async function postMessage(event) {
+function postMessage(event) {
 	event.preventDefault();
 
 	const form = event.target;
-	if (!form || form.id !== 'post-form') return false;
+	const formData = new FormData(form);
+	const data = {};
 
-	// Validate required content
-	const content = form.content.value.trim();
-	if (!content) {
-		alert('Please enter a message');
-		return false;
+	// Convert FormData to plain object
+	for (let [key, value] of formData.entries()) {
+		data[key] = value;
 	}
 
-	// Get author name, defaulting to "Guest" if empty
-	let author = form.author.value.trim() || "Guest";
+	// Show loading state
+	const submitButton = form.querySelector('button[type="submit"]');
+	const originalText = submitButton.textContent;
+	submitButton.disabled = true;
+	submitButton.textContent = 'Sending...';
 
-	// Save author name to localStorage
-	localStorage.setItem('authorName', author);
+	// Send the message
+	fetch('/post', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data)
+	})
+		.then(response => response.json())
+		.then(data => {
+			if (data.error) {
+				throw new Error(data.error);
+			}
+			// Clear the form
+			form.reset();
 
-	// Get channel name from hidden input, default to 'general'
-	const channel = (form.channel.value || 'general').trim()
-		.replace(/[^a-zA-Z0-9_-]/g, ''); // Sanitize channel name
-
-	const data = {
-		content: content,
-		author: author,
-		tags: form.tags.value.split(' ')
-			.filter(t => t)
-			.map(t => t.startsWith('#') ? t : '#' + t),
-		reply_to: form.reply_to?.value || null,
-		channel: channel
-	};
-
-	try {
-		// Show loading state
-		const submitButton = form.querySelector('button[type="submit"]');
-		const originalButtonText = submitButton.textContent;
-		submitButton.textContent = 'Sending...';
-		submitButton.disabled = true;
-
-		// Ensure the Content-Type header is properly set
-		console.log('Sending request with data:', data); // Debug log
-		const response = await fetch('/post', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json;charset=UTF-8',
-				'Accept': 'application/json'
-			},
-			body: JSON.stringify(data)
-		});
-
-		console.log('Response status:', response.status); // Debug log
-
-		if (!response.ok) {
-			const errorText = await response.text();
-			console.log('Error response:', errorText); // Debug log
-			throw new Error(errorText);
-		}
-
-		const result = await response.json();
-		console.log('Success response:', result); // Debug log
-
-		// Clear form fields
-		form.content.value = '';
-		form.tags.value = '';
-		form.reply_to.value = '';
-
-		// Reset button state
-		submitButton.textContent = originalButtonText;
-		submitButton.disabled = false;
-
-		// Instead of redirecting, reload the current page
-		window.location.reload();
-
-	} catch (error) {
-		console.error('Error posting message:', error);
-		alert('Error posting message: ' + error.message);
-
-		// Reset button state in case of error
-		if (submitButton) {
-			submitButton.textContent = originalButtonText;
+			// Redirect to the chat page
+			if (data.redirect) {
+				window.location.href = data.redirect;
+			}
+		})
+		.catch(error => {
+			alert('Error posting message: ' + error.message);
+		})
+		.finally(() => {
+			// Reset button state
 			submitButton.disabled = false;
-		}
-	}
-
-	return false;
+			submitButton.textContent = originalText;
+		});
 }
 
 function debounce(func, wait) {
