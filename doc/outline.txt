@@ -1,0 +1,177 @@
+template/css/base.css:
+Classes: .chat-container
+Tags: body
+Purpose: Defines core layout and styling including container dimensions, basic typography, and background colors
+
+template/css/forms.css:
+Classes: .message-form, .main-input, .send-button, .optional-fields, .form-controls, .form-toggle, .toggle-icon
+Tags: textarea, input, button
+Purpose: Handles all form-related styling including the message input area, buttons, and optional fields
+
+template/css/header.css:
+Classes: .chat-header, .search-section
+Tags: h1, p, #message-search
+Purpose: Styles the header section and search functionality
+
+template/css/messages.css:
+Classes: .chat-messages, .message, .message-header, .author, .timestamp, .message-content, .hashtags
+Tags: none specific
+Purpose: Styles message display including individual messages, author info, timestamps and hashtags
+
+template/css/responsive.css:
+Classes: .chat-container, .message, .message-form, .message-content, .timestamp, .expand-link, .search-section, .message-highlight, .reply-button, .reply-to
+Tags: body, textarea, input, button
+Purpose: Handles mobile responsiveness and dark mode styling across all components
+
+
+template/html/chat_message.html
+- Template for individual chat message display
+- Structure:
+  - Message container div with reply class support
+  - Message header with author
+  - Message content section with full/partial content toggle
+  - Hashtags section
+  - Reply button with onclick handler
+- Key features: Reply functionality, expandable content, hashtag display
+
+template/html/chat_message_form.html
+- Template for message input form
+- Structure:
+  - Form with POST method and postMessage event handler
+  - Main input section with textarea
+  - Optional fields section (author, tags)
+  - Hidden reply_to field
+  - Form controls section
+- Key features: Message posting, author customization, tagging, reply support
+
+template/html/chat_page.html
+- Main chat interface template
+- Structure:
+  - HTML5 doctype and head with meta tags
+  - CSS imports (base, header, forms, messages, responsive)
+  - Chat container with header showing title and stats
+  - Search section
+  - Messages display area
+  - Message form section
+- Key features: Message display, search functionality, responsive design
+
+template/html/index.html
+- Landing page template
+- Structure:
+  - HTML5 doctype and head with meta tags
+  - Embedded CSS with responsive and dark mode support
+  - Container with welcome message
+  - Navigation menu (Chat and Logs)
+  - Feature description list
+- Styling:
+  - Responsive layout
+  - Dark mode support
+  - Modern UI elements
+  - Mobile-friendly design
+- Key features: Navigation, responsive design, dark mode, clean UI
+
+
+template/js/chat.js
+- Main functionality for chat interface
+- Event Listeners and Initialization:
+  - DOMContentLoaded: Sets up form controls and search functionality
+  - Search input with debounced filtering of messages
+  - Escape key handler to clear search
+Functions:
+- initializeFormControls():
+  - Sets up form UI elements
+  - Manages optional fields visibility
+  - Handles author name persistence
+  - Implements form toggle buttons
+  - Saves user preferences to localStorage
+- postMessage(event):
+  - Handles message submission
+  - Processes author name and tags
+  - Makes POST request to /post endpoint
+  - Handles form clearing and page reload
+  - Error handling for failed submissions
+- debounce(func, wait):
+  - Utility function for rate-limiting function calls
+  - Used for search functionality
+- replyToMessage(messageId, author):
+  - Handles reply functionality
+  - Sets up reply_to field
+  - Adds @mention to message content
+  - Focuses textarea
+
+
+template/python3/chat.html.py:
+- Main script for generating chat HTML interface
+- Functions:
+  - debug_print(): Prints debug messages if DEBUG is True
+  - read_file(): Reads file content with encoding detection
+  - extract_metadata(): Gets author and hashtags from message content
+  - truncate_message(): Truncates messages to specified length
+  - process_file(): Processes a single message file and extracts metadata
+  - generate_chat_html(): Main function to generate chat interface HTML
+- Handles message threading/replies
+- Supports message truncation with expand/collapse
+- Uses HTML templates for page layout
+
+template/python3/commit_files.py:
+- Script for committing text files to Git repository
+- Functions:
+  - calculate_file_hash(): Generates SHA256 hash of file
+  - extract_metadata(): Gets metadata from file content
+  - store_metadata(): Saves metadata as JSON
+  - run_git_command(): Executes Git commands
+  - commit_text_files(): Main function to commit files
+- Handles file metadata extraction and storage
+- Manages Git operations for committing files
+
+template/python3/compile_prompt.py:
+- Script for compiling prompt files
+- Functions:
+  - get_file_stats(): Gets line count and size stats
+  - format_size(): Formats byte sizes human-readable
+  - read_file(): Reads file with encoding detection
+  - has_marker_comments(): Checks for marker comments
+  - format_file_content(): Formats file content with markers
+  - compile_prompt(): Main function to compile prompts
+- Handles file statistics and formatting
+- Manages prompt compilation process
+
+template/python3/file_utils.py:
+- Utility class for file operations
+- Class FileUtils:
+  - read_file_safe(): Safely reads files with encoding detection
+  - write_file_safe(): Safely writes files with directory creation
+- Provides common file operation functions
+
+template/python3/log.html.py:
+- Script for generating HTML log reports
+- Functions:
+  - read_file(): Reads file content
+  - extract_metadata(): Gets metadata from content
+  - generate_html(): Main function to generate HTML report
+- Handles Git repository message files
+- Generates HTML reports of messages
+
+template/python3/make_outliner_prompt.py:
+- Script for creating outline prompts
+- Functions:
+  - group_files_by_type(): Groups files by extension
+  - get_file_stats(): Gets file statistics
+  - format_size(): Formats byte sizes
+  - read_file(): Reads files with encoding detection
+  - compile_prompt(): Main function to compile outlines
+- Creates structured outlines of codebase
+
+template/python3/start_server.py:
+- HTTP server implementation
+- Class CustomHTTPRequestHandler:
+  - setup_static_files(): Sets up static file serving
+  - do_GET(): Handles GET requests
+  - do_POST(): Handles POST requests
+  - Various helper methods for file serving and processing
+- Functions:
+  - is_port_in_use(): Checks port availability
+  - find_available_port(): Finds open port
+  - run_server(): Main server function
+- Handles file serving, chat messages, and API endpoints
+- Manages static files and templates
