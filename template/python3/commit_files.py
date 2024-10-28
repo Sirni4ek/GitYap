@@ -80,61 +80,89 @@ def run_git_command(command):
 	output, error = process.communicate()
 	return output.decode('utf-8').strip(), error.decode('utf-8').strip()
 
-def commit_text_files(repo_path="."):
+def init_git_repo(repo_path):
+	"""Initialize a git repository if it doesn't exist"""
+	git_dir = os.path.join(repo_path, '.git')
+	if not os.path.exists(git_dir):
+		output, error = run_git_command(f"git init {repo_path}")
+		if error:
+			print(f"Error initializing git repo: {error}")
+			return False
+		print(f"Initialized git repository in {repo_path}")
+
+		# Set default git config for the repo
+		run_git_command(f"git -C {repo_path} config user.name 'Chat Bot'")
+		run_git_command(f"git -C {repo_path} config user.email 'chat@bot.local'")
+		return True
+	return True
+
+def commit_text_files(repo_path=".", initialize=True):
+	"""Modified to handle repository initialization"""
+	if initialize and not init_git_repo(repo_path):
+		print("Failed to initialize git repository")
+		return False
+
 	curr_dir = os.getcwd()
 	os.chdir(repo_path)
 
-	# Check if there are any changes
-	status_output, _ = run_git_command("git status --porcelain")
-	if not status_output:
-		print("No changes to commit.")
-		return
+	try:
+		# Check if there are any changes
+		status_output, _ = run_git_command("git status --porcelain")
+		if not status_output:
+			print("No changes to commit.")
+			return True
 
-	# Get all modified and untracked files
-	changed_files, _ = run_git_command("git diff --name-only")
-	untracked_files, _ = run_git_command("git ls-files --others --exclude-standard")
+		# Get all modified and untracked files
+		changed_files, _ = run_git_command("git diff --name-only")
+		untracked_files, _ = run_git_command("git ls-files --others --exclude-standard")
 
-	all_files = changed_files.split('\n') + untracked_files.split('\n')
-	txt_files = [f for f in all_files if f.endswith('.txt')]
+		all_files = changed_files.split('\n') + untracked_files.split('\n')
+		txt_files = [f for f in all_files if f.endswith('.txt')]
 
-	if not txt_files:
-		print("No uncommitted .txt files found.")
-		return
+		if not txt_files:
+			print("No uncommitted .txt files found.")
+			return True
 
-	# Process each file and store metadata
-	metadata_files = []
-	for file_path in txt_files:
-		try:
-			with open(file_path, 'r', encoding='utf-8') as f:
-				content = f.read()
+		# Process each file and store metadata
+		metadata_files = []
+		for file_path in txt_files:
+			try:
+				with open(file_path, 'r', encoding='utf-8') as f:
+					content = f.read()
 
-			metadata = extract_metadata(content, file_path)
-			metadata_file = store_metadata(file_path, metadata)
-			metadata_files.append(metadata_file)
+				metadata = extract_metadata(content, file_path)
+				metadata_file = store_metadata(file_path, metadata)
+				metadata_files.append(metadata_file)
 
-			print(f"File: {file_path}")
-			print(f"Author: {metadata['author']}")
-			print(f"Title: {metadata['title']}")
-			print(f"Hashtags: {', '.join(metadata['hashtags'])}")
-			print(f"File Hash: {metadata['file_hash']}")
-			print()
-		except Exception as e:
-			print(f"Error processing file {file_path}: {str(e)}")
+				print(f"File: {file_path}")
+				print(f"Author: {metadata['author']}")
+				print(f"Title: {metadata['title']}")
+				print(f"Hashtags: {', '.join(metadata['hashtags'])}")
+				print(f"File Hash: {metadata['file_hash']}")
+				print()
+			except Exception as e:
+				print(f"Error processing file {file_path}: {str(e)}")
 
-	# Add all .txt files and metadata files to staging
-	files_to_add = txt_files + metadata_files
-	for file in files_to_add:
-		run_git_command(f"git add {file}")
+		# Add all .txt files and metadata files to staging
+		files_to_add = txt_files + metadata_files
+		for file in files_to_add:
+			run_git_command(f"git add {file}")
 
-	# Create commit message
-	commit_message = f"Auto-commit {len(txt_files)} text files and metadata on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by commit_files.py"
+		# Create commit message
+		commit_message = f"Auto-commit {len(txt_files)} text files and metadata on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by commit_files.py"
 
-	# Commit the changes
-	run_git_command(f'git commit -m "{commit_message}"')
+		# Commit the changes
+		run_git_command(f'git commit -m "{commit_message}"')
 
-	print(f"Committed {len(txt_files)} text files and their metadata.")
-	print("Commit message:", commit_message)
-	os.chdir(curr_dir)
+		print(f"Committed {len(txt_files)} text files and their metadata.")
+		print("Commit message:", commit_message)
+		return True
+
+	except Exception as e:
+		print(f"Error in commit_text_files: {str(e)}")
+		return False
+	finally:
+		os.chdir(curr_dir)
 
 if __name__ == "__main__":
 	repo_path = sys.argv[1] if len(sys.argv) > 1 else "."

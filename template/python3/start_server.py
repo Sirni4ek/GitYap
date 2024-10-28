@@ -22,6 +22,7 @@ from datetime import datetime, timezone
 from typing import List, Tuple
 import shutil
 from pathlib import Path
+from commit_files import commit_text_files, init_git_repo
 
 # Configuration constants
 SCRIPT_TYPES = ['py', 'pl', 'rb', 'sh', 'js']
@@ -180,6 +181,20 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 				f.write(content)
 				if tags:
 					f.write(f"\n\n{' '.join(tags)}")
+
+			# Initialize and commit to git repository for this channel
+			channel_repo_path = os.path.join(message_dir)
+			try:
+				if not os.path.exists(channel_repo_path):
+					os.makedirs(channel_repo_path, exist_ok=True)
+
+				# Initialize git repo if needed and commit the new message
+				if commit_text_files(channel_repo_path):
+					print(f"Committed message to git repository for channel: {channel}")
+				else:
+					print(f"Failed to commit message to git repository for channel: {channel}")
+			except Exception as e:
+				print(f"Error handling git operations for channel {channel}: {str(e)}")
 
 			# Force regenerate the chat page for this channel
 			chat_file = f'chat_{channel}.html'
