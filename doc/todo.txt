@@ -1,8 +1,8 @@
 Priority tasks:
 
-Each channel (message/ subdirectory) should be its own git repository.
-- When saving a message, check if the git repo is initialized, then commit.
-- If the git repository allows pushing, push the message to the remote repository.
+Each channel (message/ subdirectory) should be its own git repository. (done)
+- When saving a message, check if the git repo is initialized, then commit. (done)
+- If the git repository allows pushing, push the message to the remote repository. (done)
 - Figure out the best way to handle multiple repositories and how to manage them.
 - Find the best place/event to pull messages from the remote repository.
 
