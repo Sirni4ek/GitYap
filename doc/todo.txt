@@ -1,14 +1,12 @@
 Priority tasks:
 
-Each channel (message/ subdirectory) should be its own git repository. (done)
-- When saving a message, check if the git repo is initialized, then commit. (done)
-- If the git repository allows pushing, push the message to the remote repository. (done)
-- Figure out the best way to handle multiple repositories and how to manage them. (done)
-- Find the best place/event to pull messages from the remote repository. (done)
-- - Optimize this so that it doesn't take so long to load the pages.
-- Suggest ways to implement live updates using GitHub Actions or other methods.
+Add a button which triggers synchronizing with all the remote repositories.
+- This should be a manual action, not automatic.
+- Remove the automatic synchronization code.
 
 Other tasks:
+
+Suggest ways to implement live updates using GitHub Actions or other methods.
 
 Figure out a testing strategy for the codebase and implement it.
 - Suggest ways to implement unit tests, integration tests, and end-to-end tests.
