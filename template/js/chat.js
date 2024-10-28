@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 	}
+	document.getElementById('message').focus();
 });
 
 function initializeFormControls() {
