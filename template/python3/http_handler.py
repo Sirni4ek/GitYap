@@ -141,6 +141,12 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 			content = html.escape(data.get('content', '').strip())[:5000]
 			tags = [html.escape(tag.strip())[:30] for tag in data.get('tags', [])][:10]
 			channel = html.escape(data.get('channel', 'general').strip())
+			channel_return_to = channel  # Store original channel for redirect
+
+			# if channel is 'everything', post to 'general', but return to 'everything'
+			if channel == 'everything':
+				channel = 'general'
+				channel_return_to = 'everything'
 
 			# Validate channel name
 			if not self.is_valid_channel_name(channel):
@@ -182,11 +188,18 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 			chat_file = f'chat_{channel}.html'
 			if os.path.exists(chat_file):
 				os.remove(chat_file)  # Remove existing file to force regeneration
-			self.run_script('chat.html', '--channel', channel)
+
+			# If channel != channel_return_to, regenerate both pages
+			if channel != channel_return_to:
+				chat_file_return_to = f'chat_{channel_return_to}.html'
+				if os.path.exists(chat_file_return_to):
+					os.remove(chat_file_return_to)
+
+			self.run_script('chat.html', '--channel', channel_return_to)
 
 			# Redirect back to the chat page
 			self.send_response(303)  # 303 See Other
-			channel_path = f"/chat/{channel}.html"
+			channel_path = f"/chat/{channel_return_to}.html"
 			self.send_header('Location', channel_path)
 			self.end_headers()
 

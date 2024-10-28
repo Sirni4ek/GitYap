@@ -45,15 +45,15 @@ def get_available_channels(repo_path):
 	if not os.path.exists(message_dir):
 		os.makedirs(message_dir)
 		os.makedirs(os.path.join(message_dir, "general"))
-		return ["general"]
+		return ["everything", "general"]
 
-	channels = []
+	channels = ["everything"]  # Always include "everything" channel
 	for item in os.listdir(message_dir):
 		if os.path.isdir(os.path.join(message_dir, item)):
 			channels.append(item)
-	return channels if channels else ["general"]
+	return channels if len(channels) > 1 else ["everything", "general"]
 
-def process_file(file_path, repo_path):
+def process_file(file_path, repo_path, target_channel='general'):
 	relative_path = os.path.relpath(file_path, repo_path)
 	try:
 		modification_time = datetime.fromtimestamp(os.path.getmtime(file_path), tz=timezone.utc)
@@ -76,16 +76,20 @@ def process_file(file_path, repo_path):
 
 		content = re.sub(r'(author|channel|reply-to):\s*.+', '', content, flags=re.IGNORECASE).strip()
 
-		return {
-			'author': author,
-			'content': content,
-			'timestamp': modification_time,
-			'hashtags': hashtags,
-			'channel': channel,
-			'file_path': file_path,
-			'message_id': os.path.splitext(os.path.basename(file_path))[0],
-			'reply_to': reply_to
-		}
+		# For the "everything" channel, include all messages
+		# For other channels, only include messages from that channel
+		if target_channel == 'everything' or channel == target_channel:
+			return {
+				'author': author,
+				'content': content,
+				'timestamp': modification_time,
+				'hashtags': hashtags,
+				'channel': channel,
+				'file_path': file_path,
+				'message_id': os.path.splitext(os.path.basename(file_path))[0],
+				'reply_to': reply_to
+			}
+		return None
 	except Exception as e:
 		debug_print(f"Error reading file {file_path}: {str(e)}")
 		return None
@@ -105,20 +109,33 @@ def generate_chat_html(repo_path, output_file, channel='general', max_messages=5
 		channel_nav += f'<a href="/chat/{ch}.html" class="channel-link {active_class}">{ch}</a>'
 	channel_nav += '</div>'
 
-	message_dir = os.path.join(repo_path, "message", channel)
-	if not os.path.exists(message_dir):
-		os.makedirs(message_dir)
+	message_dir = os.path.join(repo_path, "message")
 
-	file_paths = []
-	for root, _, files in os.walk(message_dir):
-		for file in files:
-			if file.endswith(".txt"):
-				file_paths.append(os.path.join(root, file))
+	# For "everything" channel, walk through all channel directories
+	if channel == 'everything':
+		file_paths = []
+		for root, _, files in os.walk(message_dir):
+			for file in files:
+				if file.endswith(".txt"):
+					file_paths.append(os.path.join(root, file))
+	else:
+		# For specific channels, only look in that channel's directory
+		channel_dir = os.path.join(message_dir, channel)
+		if not os.path.exists(channel_dir):
+			os.makedirs(channel_dir)
+
+		file_paths = []
+		for root, _, files in os.walk(channel_dir):
+			for file in files:
+				if file.endswith(".txt"):
+					file_paths.append(os.path.join(root, file))
 
 	with Pool() as pool:
-		messages = pool.map(partial(process_file, repo_path=repo_path), file_paths)
+		process_func = partial(process_file, repo_path=repo_path, target_channel=channel)
+		messages = pool.map(process_func, file_paths)
 
-	messages = [msg for msg in messages if msg is not None and msg['channel'] == channel]
+	# Filter out None values and sort messages
+	messages = [msg for msg in messages if msg is not None]
 	messages.sort(key=lambda x: (-x['timestamp'].timestamp(), x['file_path']))
 	messages = messages[:max_messages]
 
