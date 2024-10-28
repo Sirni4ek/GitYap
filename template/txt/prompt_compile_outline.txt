@@ -1,0 +1,25 @@
+Please write a short outline of each of these files in the codebase. 
+This document will be used by you to select files to edit based on prompting by the user to modify the codebase. 
+This will help improve efficiency, so that the entire codebase does not have to be put into the prompt.
+Please think deeply about what information you would need to choose which files to edit for a particular feature.
+Example features:
+
+Implement user authentication and profiles
+Add support for file attachments in messages
+Add real-time updates using WebSocket
+Implement message threading/replies
+Add message reactions/emoji support
+Add message editing and deletion
+Implement message categories/channels
+
+Give a detailed, multi-line outline of each file. 
+For .py files, include all the classes and functions and what they do.
+For .css files, list all the classes and tags defined in the file, prefixed with Classes: and Tags: respectively.
+For .html files, write a top-level outline, including the structure of the file.
+The length of the outlines should be proportional to the length of the files.
+Include the full file path for each file.
+Do not number the files, but list them in the order they appear in the codebase.
+Please include the full file path for each file.
+Do not output anything else, such as "Here's a detailed outline of each file in the codebase:"
+Do not output any other information except the outline of the files.
+
