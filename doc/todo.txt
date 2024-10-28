@@ -1,9 +1,14 @@
 Priority tasks:
 
+Add an "everything" channel that displays all messages from all channels.
+
+Add a default list of channels to initialize for a new installation.
+- These should be in the form of GitHub repositories that are cloned and initialized.
+
 Each channel (message/ subdirectory) should be its own git repository. (done)
 - When saving a message, check if the git repo is initialized, then commit. (done)
 - If the git repository allows pushing, push the message to the remote repository. (done)
-- Figure out the best way to handle multiple repositories and how to manage them.
+- Figure out the best way to handle multiple repositories and how to manage them. (done)
 - Find the best place/event to pull messages from the remote repository.
 
 Other tasks:
