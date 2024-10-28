@@ -1,7 +1,5 @@
 Priority tasks:
 
-Add an "everything" channel that displays all messages from all channels.
-
 Add a default list of channels to initialize for a new installation.
 - These should be in the form of GitHub repositories that are cloned and initialized.
 
