@@ -230,6 +230,11 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 			channel = html.escape(data.get('channel', 'general').strip())
 			channel_post_to = channel  # Store original channel for redirect
 
+			author = html.escape(data.get('author', '').strip())[:50]
+			# if author is an empty string, only whitespace, etc., set it to 'Guest'
+			if not author.strip():  # Set default author to 'Guest'
+				author = 'Guest'
+
 			# if channel is 'everything', post to 'general', but return to 'everything'
 			if channel_post_to == 'everything':
 				channel_post_to = 'general'
