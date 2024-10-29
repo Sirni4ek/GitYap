@@ -5,6 +5,7 @@ Instructions for Programming and Writing Actor:
 Thank you, helpful assistant, for your willingness to help me with my code.
 Please choose one of the tasks below and implement it in the codebase, in the order of numbered priority.
 Unless you can group several small changes together, please try to make only one change at a time.
+You may suggest creating new files/modules if that makes sense.
 Do not ask for what to do next, just choose a thing and do it.
 
 Your Objective:
