@@ -147,6 +147,40 @@ document.addEventListener('DOMContentLoaded', function() {
 		console.log('Post form not found'); // Debug log
 	}
 	document.getElementById('message').focus();
+
+	const syncButton = document.getElementById('sync-button');
+	if (syncButton) {
+		syncButton.addEventListener('click', async function() {
+			this.disabled = true;
+			const originalText = this.textContent;
+			this.textContent = 'Syncing...';
+
+			try {
+				const response = await fetch('/sync', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						channel: window.location.pathname.split('/').pop().replace('.html', '')
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error('Sync failed');
+				}
+
+				// Refresh messages after successful sync
+				window.chatClient.refreshMessages();
+			} catch (error) {
+				console.error('Sync error:', error);
+				alert('Error syncing messages: ' + error.message);
+			} finally {
+				this.disabled = false;
+				this.textContent = originalText;
+			}
+		});
+	}
 });
 
 function initializeFormControls() {

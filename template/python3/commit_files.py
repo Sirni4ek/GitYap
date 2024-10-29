@@ -106,6 +106,42 @@ def init_git_repo(repo_path):
 		return True
 	return True
 
+def pull_changes(repo_path="."):
+	"""Pull changes from remote repository"""
+	curr_dir = os.getcwd()
+	os.chdir(repo_path)
+	
+	try:
+		if not has_remote():
+			print("No remote configured, skipping pull")
+			return False
+			
+		# Fetch changes first
+		output, error = run_git_command("git fetch")
+		if error:
+			print(f"Error fetching changes: {error}")
+			return False
+			
+		# Check if we need to pull
+		status_output, _ = run_git_command("git status -uno")
+		if "Your branch is behind" in status_output:
+			# Pull changes
+			output, error = run_git_command("git pull --no-rebase")
+			if error:
+				print(f"Error pulling changes: {error}")
+				return False
+			print("Successfully pulled changes from remote repository")
+			return True
+		
+		print("Local repository is up to date")
+		return True
+		
+	except Exception as e:
+		print(f"Error in pull_changes: {str(e)}")
+		return False
+	finally:
+		os.chdir(curr_dir)
+
 def commit_text_files(repo_path=".", initialize=True):
 	"""Modified to handle repository initialization"""
 	if initialize and not init_git_repo(repo_path):

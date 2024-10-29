@@ -137,15 +137,45 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 	def do_POST(self):
 		"""Handle POST requests"""
-		# Parse URL and query parameters
 		parsed_path = urllib.parse.urlparse(self.path)
 		path = parsed_path.path
 
-		# Handle post to both /post and /chat.html
-		if path in ['/post', '/chat.html']:
+		if path == '/sync':
+			self.handle_sync_request()
+		elif path in ['/post', '/chat.html']:
 			self.handle_chat_post()
 		else:
 			self.send_error(405, "Method Not Allowed")
+
+
+	def handle_sync_request(self):
+		"""Handle manual sync request"""
+		try:
+			content_length = int(self.headers.get('Content-Length', 0))
+			post_data = self.rfile.read(content_length).decode('utf-8')
+			data = json.loads(post_data)
+
+			channel = data.get('channel', 'general')
+			if not self.is_valid_channel_name(channel):
+				self.send_json_response({'error': 'Invalid channel name'}, status=400)
+				return
+
+			channel_repo_path = os.path.join(self.directory, 'message', channel)
+			if os.path.exists(channel_repo_path):
+				from commit_files import pull_changes
+				if pull_changes(channel_repo_path):
+					# Invalidate cache after successful sync
+					page_cache.invalidate(f'chat_{channel}')
+					git_cache.invalidate(channel)
+					self.send_json_response({'status': 'success'})
+				else:
+					self.send_json_response({'error': 'Sync failed'}, status=500)
+			else:
+				self.send_json_response({'error': 'Channel not found'}, status=404)
+		except json.JSONDecodeError as e:
+			self.send_json_response({'error': f'Invalid JSON: {str(e)}'}, status=400)
+		except Exception as e:
+			self.send_json_response({'error': str(e)}, status=500)
 
 	def send_json_response(self, data, status=200):
 		"""Send a JSON response with the specified status code"""
@@ -172,11 +202,9 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 			# Handle both application/json and form submissions
 			if 'application/json' in content_type:
-				# JSON data
 				post_data = self.rfile.read(content_length).decode('utf-8')
 				data = json.loads(post_data)
 			elif 'application/x-www-form-urlencoded' in content_type:
-				# Form data
 				post_data = self.rfile.read(content_length).decode('utf-8')
 				form_data = urllib.parse.parse_qs(post_data)
 				data = {
