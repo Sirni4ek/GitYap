@@ -1,8 +1,16 @@
 Priority tasks:
 
-Add a button which triggers synchronizing with all the remote repositories.
-- This should be a manual action, not automatic.
-- Remove the automatic synchronization code.
+Make the send button immediately add the message to the chat history in the current page. (done)
+- The message should be sent to the server in the background (done)
+
+Add a button which triggers synchronizing with all the remote repositories. (done)
+- This should be a manual action, not automatic. (done)
+- Remove the automatic synchronization code. (done)
+
+Fix the problem with the Sync button, repro steps:
+- Add a new message in a remote git repo
+- Press the Sync button. Error is displayed: Error syncing messages: Sync failed
+- Press the Sync button again. It works this time.
 
 Other tasks:
 
@@ -19,3 +27,6 @@ Write a sweeper/linter script that ensures all files have marker comments
 - For Python files, also ensure indentation is correct and consistent
 
 Аdd call to setup_default_channels() somewhere appropriately
+
+If the server does not respond, the message should be queued in localstorage
+- The message should be sent when the server is back online
