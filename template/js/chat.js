@@ -47,6 +47,24 @@ class ChatClient {
 	}
 }
 
+function createMessageHTML(messageData) {
+	const now = new Date().toISOString();
+	return `
+		<div class="message">
+			<div class="message-header">
+				<span class="author">${messageData.author || 'Guest'}</span>
+			</div>
+			<div class="message-content">
+				${messageData.content}
+			</div>
+			<div class="hashtags">${messageData.tags || ''}</div>
+			<button class="reply-button" onclick="replyToMessage('temp-${now}', '${messageData.author}')" title="Reply to this message">
+				Reply
+			</button>
+		</div>
+	`;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	// Initialize form controls
 	initializeFormControls();
@@ -89,13 +107,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	// 	});
 	// }
 
+
 	const form = document.getElementById('post-form');
 	if (form) {
-		console.log('Found post form'); // Debug log
-
 		form.addEventListener('submit', function(event) {
-			event.preventDefault(); // This is crucial - stop the default form submission
-			console.log('Form submission intercepted'); // Debug log
+			event.preventDefault();
+			console.log('Form submission intercepted');
 
 			const formData = new FormData(form);
 			const data = {};
@@ -109,6 +126,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			submitButton.disabled = true;
 			submitButton.textContent = 'Sending...';
 
+			// Optimistically add message to UI
+			const messagesContainer = document.querySelector('.chat-messages');
+			const messageHTML = createMessageHTML(data);
+			messagesContainer.insertAdjacentHTML('afterbegin', messageHTML);
+
+			// Clear the form immediately
+			form.reset();
+
 			fetch('/post', {
 				method: 'POST',
 				headers: {
@@ -117,25 +142,23 @@ document.addEventListener('DOMContentLoaded', function() {
 				body: JSON.stringify(data)
 			})
 				.then(response => {
-					console.log('Response received:', response); // Debug log
+					console.log('Response received:', response);
 					return response.json();
 				})
 				.then(data => {
-					console.log('Processed data:', data); // Debug log
+					console.log('Processed data:', data);
 					if (data.error) {
 						throw new Error(data.error);
 					}
-					// Clear the form
-					form.reset();
 
-					// Redirect to the chat page
-					if (data.redirect) {
-						window.location.href = data.redirect;
-					}
+					// If successful, refresh messages to get the proper message ID and formatting
+					window.chatClient.refreshMessages();
 				})
 				.catch(error => {
-					console.error('Error:', error); // Debug log
+					console.error('Error:', error);
 					alert('Error posting message: ' + error.message);
+					// Remove the optimistically added message on error
+					messagesContainer.firstChild.remove();
 				})
 				.finally(() => {
 					// Reset button state
@@ -143,9 +166,8 @@ document.addEventListener('DOMContentLoaded', function() {
 					submitButton.textContent = originalText;
 				});
 		});
-	} else {
-		console.log('Post form not found'); // Debug log
 	}
+
 	document.getElementById('message').focus();
 
 	const syncButton = document.getElementById('sync-button');
