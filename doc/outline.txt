@@ -1,115 +1,146 @@
-/template/python3/chat.html.py
+template/python3/chat.html.py: 31 lines, 1.3KB
+template/python3/commit_files.py: 221 lines, 6.3KB
+template/python3/compile_prompt.py: 162 lines, 5.4KB
+template/python3/config.py: 18 lines, 524.0B
+template/python3/file_operations.py: 83 lines, 3.0KB
+template/python3/file_utils.py: 30 lines, 906.0B
+template/python3/http_handler.py: 497 lines, 16.9KB
+template/python3/log.html.py: 124 lines, 3.9KB
+template/python3/make_outliner_prompt.py: 174 lines, 5.7KB
+template/python3/server.py: 83 lines, 2.6KB
+template/python3/start_server.py: 32 lines, 938.0B
+template/python3/utils.py: 63 lines, 1.7KB
+template/python3/chat/channel_manager.py: 39 lines, 1.4KB
+template/python3/chat/file_reader.py: 38 lines, 1.1KB
+template/python3/chat/html_generator.py: 74 lines, 3.1KB
+template/python3/chat/message_processor.py: 47 lines, 1.7KB
 
-Main script for generating chat HTML pages
-Handles command line arguments for customizing chat display
-Uses chat.html_generator to generate HTML output
-Dependencies: argparse, chat.html_generator, chat.file_reader
+/template/python3/chat.html.py:
 
-/template/python3/commit_files.py
+Main script to generate chat HTML pages
+Handles command line arguments for channel, output file, message limits
+Uses chat.html_generator for HTML generation
+Dependencies: argparse, chat.html_generator
+
+/template/python3/commit_files.py:
 
 Git repository management and file commit functionality
-Functions: calculate_file_hash, extract_metadata, store_metadata, commit_text_files
+Functions: calculate_file_hash, extract_metadata, store_metadata, git operations
 Handles file metadata extraction and storage
-Git operations: init_git_repo, pull_changes, push_changes
-Dependencies: os, git, json, hashlib
+Dependencies: git, hashlib, json
+Used by server.py for message persistence
 
-/template/python3/compile_prompt.py
+/template/python3/compile_prompt.py:
 
 Compiles documentation and prompts from source files
-Functions: get_file_stats, format_size, read_file, format_file_content
-Handles file statistics and content formatting
+File statistics gathering and formatting
+Marker comment handling for different file types
 Dependencies: os, sys, re
+Used for development documentation
 
-/template/python3/config.py
+/template/python3/config.py:
 
-Configuration constants for the application
-Defines SCRIPT_TYPES, INTERPRETERS, MIME_TYPES
-Maps file extensions to interpreters and MIME types
+Configuration constants for file types and interpreters
+Maps file extensions to MIME types
+Defines script types and their interpreters
+Used by http_handler.py and server.py
 
-/template/python3/file_operations.py
+/template/python3/file_operations.py:
 
-File system operations and channel setup
-Functions: setup_static_files, find_scripts, initialize_channel
-Handles static file copying and channel initialization
-Dependencies: os, shutil, pathlib
+File system operations for static files and channels
+Channel initialization and setup
+Git repository setup for channels
+Dependencies: os, shutil, git
+Used by server.py for file management
 
-/template/python3/file_utils.py
+/template/python3/file_utils.py:
 
-Utility functions for file operations
-Class FileUtils: read_file_safe, write_file_safe
-Handles file encoding detection and safe file operations
+File reading and writing utilities with encoding detection
+Safe file operations with error handling
 Dependencies: os, chardet
+Used throughout the codebase for file operations
 
-/template/python3/http_handler.py
+/template/python3/http_handler.py:
 
-Custom HTTP request handler implementation
-Class CustomHTTPRequestHandler: handles GET/POST requests
-Implements chat functionality, file serving, WebSocket support
-Dependencies: http.server, urllib, json
+Custom HTTP request handler for chat server
+Handles GET/POST requests, WebSocket connections
+Static file serving and chat page generation
+Dependencies: http.server, websockets
+Core server component
 
-/template/python3/log.html.py
+/template/python3/log.html.py:
 
 Generates HTML report of message files
-Functions: read_file, extract_metadata, generate_html
-Handles Git repository message analysis
-Dependencies: os, git, gnupg, chardet
+Git repository message tracking
+Message metadata extraction
+Dependencies: git, gnupg, chardet
+Used for message logging and reporting
 
-/template/python3/make_outliner_prompt.py
+/template/python3/make_outliner_prompt.py:
 
-Creates documentation outlines
-Functions: group_files_by_type, get_file_stats
-Similar to compile_prompt.py but for outlines
+Documentation generation tool
+Groups files by type and generates statistics
+Marker comment handling
 Dependencies: os, sys, re
+Development documentation tool
 
-/template/python3/server.py
+/template/python3/server.py:
 
-WebSocket and HTTP server implementation
-Class ChatServer: handles WebSocket connections
-Function run_server: starts HTTP server
-Dependencies: socketserver, websockets, asyncio
+Main chat server implementation
+HTTP and WebSocket server setup
+Client connection management
+Dependencies: socketserver, websockets
+Core application server
 
-/template/python3/start_server.py
+/template/python3/start_server.py:
 
-Entry point for starting the server
-Handles port selection and server initialization
-Dependencies: argparse, server.py, utils.py
+Server startup script
+Command line argument handling
+Port availability checking
+Dependencies: argparse, server.py
+Entry point for running the server
 
-/template/python3/utils.py
+/template/python3/utils.py:
 
 Utility functions and caching
-Class Cache: implements caching functionality
-Functions: is_port_in_use, find_available_port, generate_title
-Dependencies: socket, random, datetime
+Port checking and finding
+Message title generation
+Dependencies: socket, random
+Used throughout the codebase
 
-/template/python3/chat/channel_manager.py
+/template/python3/chat/channel_manager.py:
 
 Channel management functionality
-Functions: get_available_channels, get_channel_files
-Handles channel directory structure
+Channel discovery and file organization
 Dependencies: os
+Used by html_generator.py
 
-/template/python3/chat/file_reader.py
+/template/python3/chat/file_reader.py:
 
-File reading and parsing functionality
-Functions: read_file, extract_metadata, truncate_message
-Handles file encoding and content extraction
+File reading with encoding detection
+Message metadata extraction
+Content truncation
 Dependencies: chardet, re
+Used by html_generator.py
 
-/template/python3/chat/html_generator.py
+/template/python3/chat/html_generator.py:
 
-HTML generation for chat interface
-Function generate_chat_html: main HTML generation
-Handles message formatting and template processing
+Chat HTML page generation
+Channel navigation
+Message formatting
 Dependencies: multiprocessing, datetime
+Used by chat.html.py
 
-/template/python3/chat/message_processor.py
+/template/python3/chat/message_processor.py:
 
-Message processing functionality
-Function process_file: processes message files
-Handles metadata extraction and message formatting
+Message processing and metadata extraction
+Channel and reply handling
 Dependencies: os, re, datetime
+Used by html_generator.py
 
 ===
+
+template/js/chat.js: 331 lines, 8.9KB
 
 template/js/chat.js:
 
@@ -129,6 +160,11 @@ Implements debouncing for search optimization
 Provides real-time updates through WebSocket connection
 
 ===
+
+template/html/chat_message.html: 18 lines, 599.0B
+template/html/chat_message_form.html: 13 lines, 719.0B
+template/html/chat_page.html: 41 lines, 1.3KB
+template/html/index.html: 104 lines, 2.8KB
 
 template/html/chat_message.html:
 
@@ -176,30 +212,40 @@ Key relationships: chat_page.html includes both chat_message.html and chat_messa
 
 ===
 
+template/css/base.css: 24 lines, 664.0B
+template/css/forms.css: 139 lines, 2.2KB
+template/css/header.css: 125 lines, 1.9KB
+template/css/messages.css: 100 lines, 1.5KB
+template/css/responsive.css: 99 lines, 1.4KB
+
 template/css/base.css:
 Classes: .chat-container
 Tags: body
 Core layout styles for the chat application
 Defines basic typography, colors, and container structure
 Dependencies: Used by all HTML templates as base styling
+
 template/css/forms.css:
 Classes: .message-form, .main-input, .send-button, .optional-fields, .form-controls, .form-toggle
 Tags: textarea, input, button
 Styles for message input form and controls
 Includes dark mode support
 Dependencies: Used by message form components
+
 template/css/header.css:
 Classes: .chat-header, .channel-section, .channel-nav, .channel-link, .search-section
 Tags: h1, p, #message-search
 Styles for header area including channels and search
 Includes responsive design and dark mode
 Dependencies: Used by header components and channel navigation
+
 template/css/messages.css:
 Classes: .chat-messages, .message, .message-header, .author, .timestamp, .message-content, .hashtags
 Tags: None specific
 Styles for message display and formatting
 Includes hover effects and reply functionality
 Dependencies: Used by message display components
+
 template/css/responsive.css:
 Classes: .message-highlight, .reply-button, .reply-to
 Tags: None specific
