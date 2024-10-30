@@ -6,58 +6,52 @@ from typing import List, Tuple
 from config import INTERPRETER_MAP, SCRIPT_TYPES
 
 class ScriptHandler:
-	def __init__(self, request_handler):
-		self.handler = request_handler
+    def __init__(self, request_handler):
+        self.handler = request_handler
 
-	def run_script(self, script_name: str, *args):
-		"""Run a script with the appropriate interpreter and arguments"""
-		found_scripts = self.find_scripts(script_name)
+    def run_script(self, script_name: str, *args):
+        """Run a script with the appropriate interpreter and arguments"""
+        script_path = os.path.join(self.handler.template_directory, script_name)
 
-		if not found_scripts:
-			print(f"No scripts found for {script_name}")
-			return
+        if not os.path.exists(script_path):
+            print(f"Script not found: {script_path}")
+            return
 
-		for script_path, script_type in found_scripts:
-			interpreter = INTERPRETER_MAP.get(script_type)
-			if interpreter:
-				cmd = [interpreter, script_path]
-				if args:  # Add any additional arguments
-					cmd.extend(str(arg) for arg in args)
-				print(f"Running command: {' '.join(cmd)}")  # Debug logging
-				try:
-					subprocess.run(cmd, cwd=self.handler.directory, check=True)
-				except subprocess.CalledProcessError as e:
-					print(f"Error running script: {e}")
-				except Exception as e:
-					print(f"Unexpected error running script: {e}")
+        # Determine script type from extension
+        ext = os.path.splitext(script_name)[1][1:]  # Remove the dot
+        interpreter = INTERPRETER_MAP.get(ext)
 
-	def find_scripts(self, script_name: str) -> List[Tuple[str, str]]:
-		"""Find all scripts matching the given name"""
-		found_scripts = []
-		template_dir = self.handler.template_directory
+        if not interpreter:
+            print(f"No interpreter found for extension: {ext}")
+            return
 
-		if os.path.exists(template_dir):
-			for script_type in SCRIPT_TYPES:
-				# Handle both with and without extension
-				base_name = script_name
-				if '.' in script_name:
-					base_name = script_name.split('.')[0]
+        cmd = [interpreter, script_path] + list(args)
+        print(f"Running command: {' '.join(cmd)}")  # Debug logging
+        print(f"Working directory: {self.handler.directory}")  # Debug logging
 
-				script_path = os.path.join(template_dir, f"{base_name}.{script_type}")
-				if os.path.exists(script_path):
-					found_scripts.append((script_path, script_type))
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=self.handler.directory,
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            print(f"Script output: {result.stdout}")
+            if result.stderr:
+                print(f"Script errors: {result.stderr}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error running script: {e}")
+            print(f"Script output: {e.output}")
+            print(f"Script errors: {e.stderr}")
+        except Exception as e:
+            print(f"Unexpected error running script: {e}")
 
-		if not found_scripts:
-			print(f"No scripts found in {template_dir} for {script_name}")
-			print(f"Available files: {os.listdir(template_dir)}")
-
-		return found_scripts
-
-	def run_script_if_needed(self, output_filename: str, script_name: str, *args):
-		"""Run a script if the output file doesn't exist or is outdated"""
-		output_filepath = os.path.join(self.handler.directory, output_filename)
-		if not os.path.exists(output_filepath) or \
-		   time.time() - os.path.getmtime(output_filepath) > 60:
-			print(f"Generating {output_filename}...")
-			self.run_script(script_name, *args)
+    def run_script_if_needed(self, output_filename: str, script_name: str, *args):
+        """Run a script if the output file doesn't exist or is outdated"""
+        output_filepath = os.path.join(self.handler.directory, output_filename)
+        if not os.path.exists(output_filepath) or \
+           time.time() - os.path.getmtime(output_filepath) > 60:
+            print(f"Generating {output_filename}...")
+            self.run_script(script_name, *args)
 # end template/python3/handlers/script_handler.py

@@ -36,7 +36,7 @@ class RequestHandler:
 				from commit_files import pull_changes
 				if pull_changes(channel_repo_path):
 					# Invalidate cache after successful sync
-					page_cache.invalidate(f'chat_{channel}')
+					page_cache.invalidate(f'chat/{channel}')
 					git_cache.invalidate(channel)
 					self.send_json_response({'status': 'success'})
 				else:
