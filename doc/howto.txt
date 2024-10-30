@@ -1,0 +1,14 @@
+Developing a new feature:
+
+1. Add the feature description to todo.txt
+2. Update the code outline, if it's needed
+2a. Run `t outline`
+2b. Run prompt_py.txt, prompt_js.txt, prompt_html.txt, prompt_css.txt through LLM and save to doc/outline.txt
+3. Generate the prompt with `t prompt`
+4. Run prompt.txt through LLM.
+4a. Run the prompt itself
+4b. Provide the files LLM asks for
+4c. Integrate the code snippets into the codebase
+4d. Test and follow up as needed
+4e. Commit into repo
+
