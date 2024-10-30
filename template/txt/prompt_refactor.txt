@@ -1,5 +1,9 @@
 I have a codebase with some large files, and I want to break up the largest files into smaller files that are up to 50-100 lines each.
 Can you please help me? Please tell me which file you want to start with.
-When outputting files, please use the same begin/end file markers.
+When outputting files, please use this format of begin and end marker comment (in their respective comment syntax):
 When refactoring a file, please retain at least a stub of the original file name and entry point.
 When creating new files, please avoid using names of existing files.
+# begin template/python3/example_file.py ; marker comment, please do not remove
+# end example_file.py ; marker comment, please do not remove
+<!-- begin template/html/examlpe_file.html ; marker comment, please do not remove -->
+<!-- end examlpe_file.html ; marker comment, please do not remove -->

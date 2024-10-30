@@ -80,7 +80,7 @@ def compile_prompt(template_dir='template'):
 			raise FileNotFoundError(f"Template directory '{template_dir}' not found")
 
 		# Read template files
-		prefix_path = os.path.join(template_dir, 'txt', 'prompt_prefix.txt')
+		prefix_path = os.path.join(template_dir, 'txt', 'prompt_process_todo.txt')
 		suffix_path = os.path.join(template_dir, 'txt', 'prompt_suffix.txt')
 		outline_path = os.path.join('doc', 'outline.txt')
 		todo_path = os.path.join('doc', 'todo.txt')
@@ -115,7 +115,7 @@ def compile_prompt(template_dir='template'):
 
 		for root, dirs, files in os.walk(template_dir):
 			for file in sorted(files):
-				if file.startswith('.') or file in ['prompt_prefix.txt', 'prompt_suffix.txt', 'todo.txt']:
+				if file.startswith('.') or file in ['prompt_process_todo.txt', 'prompt_suffix.txt', 'todo.txt']:
 					continue
 
 				# exclude .pyc files and __pycache__ directories
