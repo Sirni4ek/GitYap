@@ -1,5 +1,14 @@
 Priority tasks:
 
+Write detailed installation instructions for the project.
+- Windows, using WSL
+- Mac
+- GNU/Linux
+
+Make an installer script that takes care of everything.
+- Install dependencies
+- Add 't' command to user's shell as an alias, detect shell type first
+
 Make the send button immediately add the message to the chat history in the current page. (done)
 - The message should be sent to the server in the background (done)
 
