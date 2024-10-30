@@ -1,5 +1,13 @@
 Priority tasks:
 
+The project should function seamlessly in the following scenario:
+- User forks the project on GitHub
+- User clones their fork of the project locally and runs it
+- Messages repository is stored in a uniquely named directory in user's fork (based on fork location)
+- The root project is updated with list of forks that clients should pull messages from
+- Perhaps the messages are stored in a separate branch?
+- Please fill in with missing details
+
 Write detailed installation instructions for the project.
 - Windows, using WSL
 - Mac
