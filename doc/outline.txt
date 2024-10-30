@@ -1,98 +1,113 @@
-template/python3/chat.html.py:
+/template/python3/chat.html.py
 
-Main chat page generator with message handling and HTML templating
-Functions: read_file, extract_metadata, truncate_message, get_available_channels, process_file, generate_chat_html
-Handles channel management, message formatting, and HTML generation
-Dependencies: os, re, datetime, chardet, argparse, multiprocessing
-Used by http_handler.py for serving chat pages
+Main script for generating chat HTML pages
+Handles command line arguments for customizing chat display
+Uses chat.html_generator to generate HTML output
+Dependencies: argparse, chat.html_generator, chat.file_reader
 
-template/python3/commit_files.py:
+/template/python3/commit_files.py
 
-Git repository management and file commit handling
-Functions: calculate_file_hash, extract_metadata, store_metadata, run_git_command, commit_text_files
-Manages git operations, metadata extraction, and file commits
-Dependencies: os, re, subprocess, datetime, json, hashlib
-Used for version control of message files
+Git repository management and file commit functionality
+Functions: calculate_file_hash, extract_metadata, store_metadata, commit_text_files
+Handles file metadata extraction and storage
+Git operations: init_git_repo, pull_changes, push_changes
+Dependencies: os, git, json, hashlib
 
-template/python3/compile_prompt.py:
+/template/python3/compile_prompt.py
 
-Compiles documentation and prompts from codebase
-Functions: get_file_stats, format_size, read_file, has_marker_comments, format_file_content
-Generates formatted documentation from source files
+Compiles documentation and prompts from source files
+Functions: get_file_stats, format_size, read_file, format_file_content
+Handles file statistics and content formatting
 Dependencies: os, sys, re
-Used for generating documentation and AI prompts
 
-template/python3/config.py:
+/template/python3/config.py
 
-Configuration constants and settings
-Defines: SCRIPT_TYPES, INTERPRETERS, MIME_TYPES, DEFAULT_CHANNELS
-Central configuration for file types, interpreters, and channels
-No external dependencies
-Used throughout the codebase for configuration
+Configuration constants for the application
+Defines SCRIPT_TYPES, INTERPRETERS, MIME_TYPES
+Maps file extensions to interpreters and MIME types
 
-template/python3/file_operations.py:
+/template/python3/file_operations.py
 
-File system operations and management
-Functions: setup_static_files, initialize_channel, setup_default_channels
-Handles file copying, channel initialization, and directory setup
-Dependencies: os, shutil, Path from pathlib
-Used by server.py and http_handler.py
+File system operations and channel setup
+Functions: setup_static_files, find_scripts, initialize_channel
+Handles static file copying and channel initialization
+Dependencies: os, shutil, pathlib
 
-template/python3/file_utils.py:
+/template/python3/file_utils.py
 
 Utility functions for file operations
-Class: FileUtils with read_file_safe and write_file_safe methods
-Safe file reading/writing with encoding detection
+Class FileUtils: read_file_safe, write_file_safe
+Handles file encoding detection and safe file operations
 Dependencies: os, chardet
-Used throughout codebase for file operations
 
-template/python3/http_handler.py:
+/template/python3/http_handler.py
 
-HTTP request handler implementation
-Class: CustomHTTPRequestHandler
-Handles HTTP requests, serves files, manages chat operations
-Dependencies: os, re, json, urllib, datetime
-Core server component used by server.py
+Custom HTTP request handler implementation
+Class CustomHTTPRequestHandler: handles GET/POST requests
+Implements chat functionality, file serving, WebSocket support
+Dependencies: http.server, urllib, json
 
-template/python3/log.html.py:
+/template/python3/log.html.py
 
-Log page generator for message history
+Generates HTML report of message files
 Functions: read_file, extract_metadata, generate_html
-Generates HTML report of message history with git info
-Dependencies: os, re, datetime, git, gnupg, chardet
-Used for generating message logs
+Handles Git repository message analysis
+Dependencies: os, git, gnupg, chardet
 
-template/python3/make_outliner_prompt.py:
+/template/python3/make_outliner_prompt.py
 
-Documentation outline generator
-Functions: group_files_by_type, get_file_stats, format_file_content
-Creates structured documentation outlines
+Creates documentation outlines
+Functions: group_files_by_type, get_file_stats
+Similar to compile_prompt.py but for outlines
 Dependencies: os, sys, re
-Used for documentation generation
 
-template/python3/server.py:
+/template/python3/server.py
 
-Main server implementation with WebSocket support
-Class: ChatServer with HTTP and WebSocket servers
-Handles server initialization and client connections
-Dependencies: socketserver, asyncio, websockets
-Main entry point for the chat application
+WebSocket and HTTP server implementation
+Class ChatServer: handles WebSocket connections
+Function run_server: starts HTTP server
+Dependencies: socketserver, websockets, asyncio
 
-template/python3/start_server.py:
+/template/python3/start_server.py
 
-Server startup script
-Functions: main
-Handles command line arguments and server startup
-Dependencies: argparse, os
 Entry point for starting the server
+Handles port selection and server initialization
+Dependencies: argparse, server.py, utils.py
 
-template/python3/utils.py:
+/template/python3/utils.py
 
 Utility functions and caching
-Classes: Cache
+Class Cache: implements caching functionality
 Functions: is_port_in_use, find_available_port, generate_title
-Dependencies: socket, random, datetime, functools
-Used throughout codebase for common operations
+Dependencies: socket, random, datetime
+
+/template/python3/chat/channel_manager.py
+
+Channel management functionality
+Functions: get_available_channels, get_channel_files
+Handles channel directory structure
+Dependencies: os
+
+/template/python3/chat/file_reader.py
+
+File reading and parsing functionality
+Functions: read_file, extract_metadata, truncate_message
+Handles file encoding and content extraction
+Dependencies: chardet, re
+
+/template/python3/chat/html_generator.py
+
+HTML generation for chat interface
+Function generate_chat_html: main HTML generation
+Handles message formatting and template processing
+Dependencies: multiprocessing, datetime
+
+/template/python3/chat/message_processor.py
+
+Message processing functionality
+Function process_file: processes message files
+Handles metadata extraction and message formatting
+Dependencies: os, re, datetime
 
 ===
 
