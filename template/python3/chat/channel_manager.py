@@ -9,7 +9,8 @@ def get_available_channels(repo_path):
         os.makedirs(os.path.join(message_dir, "general"))
         return ["everything", "general"]
 
-    channels = ["everything"]  # Always include "everything" channel
+    #channels = ["everything"]  # Always include "everything" channel
+    channels = []
     for item in os.listdir(message_dir):
         if os.path.isdir(os.path.join(message_dir, item)):
             channels.append(item)
