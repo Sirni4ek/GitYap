@@ -7,7 +7,7 @@ from .file_reader import read_file, truncate_message
 from .channel_manager import get_available_channels, get_channel_files
 from .message_processor import process_file
 
-def generate_chat_html(repo_path, output_file, channel='general', max_messages=50, max_message_length=300, title="Timble Chat"):
+def generate_chat_html(repo_path, output_file, channel='general', max_messages=50, max_message_length=300, title="GitYap Chat"):
     HTML_TEMPLATE = read_file('./template/html/chat_page.html')
     MESSAGE_TEMPLATE = read_file('./template/html/chat_message.html')
     MESSAGE_FORM_TEMPLATE = read_file('./template/html/chat_message_form.html')

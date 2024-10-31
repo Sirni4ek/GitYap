@@ -109,7 +109,7 @@ def generate_html(repo_path, output_file):
 		table_rows=''.join(table_rows),
 		file_count=file_count,
 		current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-		title="Timble"
+		title="GitYap"
 	)
 
 	with open(output_file, 'w', encoding='utf-8') as f:

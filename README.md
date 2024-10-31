@@ -1,8 +1,8 @@
-# Timble: A Minimalist Message-Based Communication Platform
+# GitYap: A Minimalist Message-Based Communication Platform
 
 ## Overview
 
-Timble is a lightweight, file-based messaging platform that combines the simplicity of Unix philosophy with modern web technologies. It's designed for developers, researchers, and anyone who appreciates elegant, minimal solutions to complex problems.
+GitYap is a lightweight, file-based messaging platform that combines the simplicity of Unix philosophy with modern web technologies. It's designed for developers, researchers, and anyone who appreciates elegant, minimal solutions to complex problems.
 
 ### Key Features
 
@@ -50,8 +50,10 @@ class MyProcessor:
 ## Quick Start
 
 ```bash
+# Fork this repository to your GitHub account
+
 # Clone the repository
-git clone https://github.com/yourusername/timble.git
+git clone https://github.com/yourusername/gityap
 
 # Start the server
 python3 start_server.py
@@ -83,7 +85,7 @@ Check our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Research Opportunities
 
-Timble provides unique opportunities for research in:
+GitYap provides unique opportunities for research in:
 
 - Distributed communication systems
 - Message propagation patterns

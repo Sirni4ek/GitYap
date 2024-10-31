@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# timble.sh
-# to use: source timble.sh
+# gityap.sh
+# to use: source gityap.sh ; # then use the 'g
 
 # Define command-script pairs
 command_scripts=""
@@ -104,6 +104,6 @@ t() {
 # Create the alias
 alias t=t
 
-echo "timble script loaded. Use 't <command> [arguments...]' to run commands."
+echo "gityap script loaded. Use 'g <command> [arguments...]' to run commands."
 
-# end of timble.sh
+# end of gityap.sh

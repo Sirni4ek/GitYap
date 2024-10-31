@@ -9,7 +9,7 @@ if __name__ == "__main__":
 	parser.add_argument("--output_file", default="chat.html", help="Output HTML file name")
 	parser.add_argument("--max_messages", type=int, default=50, help="Maximum number of messages to display")
 	parser.add_argument("--max_message_length", type=int, default=300, help="Maximum length of each message before truncation")
-	parser.add_argument("--title", default="Timble Chat", help="Title of the chat page")
+	parser.add_argument("--title", default="GitYap Chat", help="Title of the chat page")
 	parser.add_argument("--debug", action="store_true", help="Enable debug output")
 
 	args = parser.parse_args()
