@@ -12,3 +12,12 @@ Developing a new feature:
 4d. Test and follow up as needed
 4e. Commit into repo
 
+New instance:
+1. Fork the repo
+2. Clone the fork
+3. Run `t setup` in the project root #todo
+4. Run `t start` in the project root
+5. Open the project in a browser
+6. Your fork will be picked up and added to the forks list
+7. To publish new messages to the chat, publish them to your fork, and others will pull from it
+
