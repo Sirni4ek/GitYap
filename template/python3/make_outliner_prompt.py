@@ -152,6 +152,7 @@ def compile_prompt(template_dir='template'):
 					raise
 
 			# Write to type-specific prompt file
+			# prompt_css.txt, prompt_js.txt, prompt_html.txt, prompt_py.txt
 			prompt_filename = f'prompt_{ext[1:] if ext.startswith(".") else ext}.txt'
 			try:
 				with open(prompt_filename, 'w', encoding='utf-8') as f:
