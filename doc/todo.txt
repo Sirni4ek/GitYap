@@ -8,6 +8,8 @@ The project should function seamlessly in the following scenario:
 - Perhaps the messages are stored in a separate branch?
 - Please fill in with missing details
 
+Future tasks to keep in mind:
+
 Write detailed installation instructions for the project.
 - Windows, using WSL
 - Mac
@@ -29,8 +31,6 @@ Fix the problem with the Sync button, repro steps:
 - Press the Sync button. Error is displayed: Error syncing messages: Sync failed
 - Press the Sync button again. It works this time.
 
-Other tasks:
-
 Suggest ways to implement live updates using GitHub Actions or other methods.
 
 Figure out a testing strategy for the codebase and implement it.
@@ -47,3 +47,4 @@ Write a sweeper/linter script that ensures all files have marker comments
 
 If the server does not respond, the message should be queued in localstorage
 - The message should be sent when the server is back online
+
