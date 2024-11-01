@@ -83,7 +83,7 @@ run_script() {
 }
 
 # Main function to handle subcommands
-t() {
+g() {
 	if [ -z "$1" ]; then
 		echo "Usage: t <command> [arguments...]"
 		echo "Available commands:"
@@ -102,7 +102,7 @@ t() {
 }
 
 # Create the alias
-alias t=t
+alias g=g
 
 echo "gityap script loaded. Use 'g <command> [arguments...]' to run commands."
 
