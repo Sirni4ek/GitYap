@@ -7,6 +7,7 @@
 
 import argparse
 import os
+import webbrowser
 from server import run_server
 from utils import is_port_in_use, find_available_port
 
@@ -19,12 +20,18 @@ def main():
 
 	args = parser.parse_args()
 
-	if is_port_in_use(args.port):
-		print(f"Port {args.port} is already in use.")
-		args.port = find_available_port(args.port + 1)
-		print(f"Trying port {args.port}...")
+	port = args.port
+	while is_port_in_use(port):
+		print(f"Port {port} is already in use.")
+		port = find_available_port(port + 1)
+		print(f"Trying port {port}...")
 
-	run_server(args.port, args.directory)
+	run_server(port, args.directory)
+
+	# Open the server in the browser
+	url = f"http://localhost:{port}"
+	webbrowser.open(url)
+	print(f"Server is running on {url}")
 
 if __name__ == "__main__":
 	main()
