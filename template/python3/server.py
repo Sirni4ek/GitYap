@@ -52,32 +52,38 @@ class ChatServer:
 		# Start WebSocket server in the main thread
 		asyncio.run(self.start_websocket_server())
 
-def run_server(port: int, directory: str) -> bool:
-    """Run the HTTP server"""
-    os.chdir(directory)
-    CustomHTTPRequestHandler.setup_static_files(directory)
+def run_server(port: int, directory: str) -> socketserver.TCPServer:
+	"""Run the HTTP server"""
+	os.chdir(directory)
+	CustomHTTPRequestHandler.setup_static_files(directory)
 
-    try:
-        with socketserver.TCPServer(("", port), CustomHTTPRequestHandler) as httpd:
-            print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
-            httpd.serve_forever()
-            return True
-    except Exception as e:
-        print(f"Error starting server: {e}")
-        return False
+	try:
+		httpd = socketserver.TCPServer(("", port), CustomHTTPRequestHandler)
+		print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
+
+		# Start serving in a separate thread
+		import threading
+		server_thread = threading.Thread(target=httpd.serve_forever)
+		server_thread.daemon = True
+		server_thread.start()
+
+		return httpd
+	except Exception as e:
+		print(f"Error starting server: {e}")
+		return None
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run chat server with WebSocket support.")
-    parser.add_argument('-p', '--port', type=int, default=8000, help='Port to serve on (default: 8000)')
-    parser.add_argument('-d', '--directory', type=str, default=os.getcwd(), help='Directory to serve')
+	parser = argparse.ArgumentParser(description="Run chat server with WebSocket support.")
+	parser.add_argument('-p', '--port', type=int, default=8000, help='Port to serve on (default: 8000)')
+	parser.add_argument('-d', '--directory', type=str, default=os.getcwd(), help='Directory to serve')
 
-    args = parser.parse_args()
+	args = parser.parse_args()
 
-    if is_port_in_use(args.port):
-        args.port = find_available_port(args.port + 1)
-        print(f"Using port {args.port}...")
+	if is_port_in_use(args.port):
+		args.port = find_available_port(args.port + 1)
+		print(f"Using port {args.port}...")
 
-    server = ChatServer(args.port, args.directory)
-    server.run()
+	server = ChatServer(args.port, args.directory)
+	server.run()
 
 # end server.py ; marker comment, please do not remove
