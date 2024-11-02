@@ -56,7 +56,7 @@ class RequestHandler:
 			
 		self.handler = request_handler
 		self.directory = os.getenv('CHAT_DIRECTORY', './chat')
-		self.chat_handler = ChatHandler()
+		self.chat_handler = ChatHandler(request_handler)
 		
 		# These attributes will be set during request handling
 		self._headers = None
