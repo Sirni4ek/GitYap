@@ -1,0 +1,2 @@
+# search past commits for deleted string
+git log -S 'def function' --source --all
