@@ -3,6 +3,7 @@ import os
 import re
 from datetime import datetime
 from utils import page_cache, git_cache
+import json
 
 class ChatHandler:
 	def __init__(self, request_handler):
@@ -128,4 +129,146 @@ class ChatHandler:
 		"""Generate and serve the log report"""
 		self.handler.script_handler.run_script_if_needed('log.html', 'log.html')
 		self.handler.static_handler.serve_static_file('log.html')
-# end template/python3/handlers/chat_handler.py
+
+	def handle_chat_post(self):
+		"""Handle POST request for chat messages"""
+		try:
+			print("\n=== Starting chat post handling ===")
+
+			# Get and decode request data
+			content_length = int(self.handler.headers.get('Content-Length', 0))
+			print(f"Content Length: {content_length}")
+			post_data = self.handler.rfile.read(content_length).decode('utf-8')
+			print(f"Raw POST data: {post_data}")
+
+			# Parse JSON data
+			try:
+				data = json.loads(post_data)
+				print(f"Parsed data: {json.dumps(data, indent=2)}")
+			except json.JSONDecodeError as e:
+				print(f"JSON decode error: {str(e)}")
+				self._send_json_response({
+					'error': 'Invalid JSON format',
+					'debug_info': {
+						'error_message': str(e),
+						'error_position': e.pos,
+						'raw_data': post_data
+					}
+				}, 400)
+				return
+
+			# Extract fields
+			author = data.get('author', 'Guest')
+			content = data.get('content', '')
+			tags = data.get('tags', [])
+			channel = data.get('channel', 'general')
+
+			print(f"Extracted fields:")
+			print(f"- Author: {author}")
+			print(f"- Content: {content}")
+			print(f"- Tags: {tags}")
+			print(f"- Channel: {channel}")
+
+			if not content:
+				print("Error: Missing content")
+				self._send_json_response({
+					'error': 'Missing content',
+					'debug_info': {'received_data': data}
+				}, 400)
+				return
+
+			if not self.is_valid_channel_name(channel):
+				print(f"Error: Invalid channel name: {channel}")
+				self._send_json_response({
+					'error': 'Invalid channel name',
+					'debug_info': {'channel': channel}
+				}, 400)
+				return
+
+			# Create message directory
+			message_dir = os.path.join(self.handler.directory, 'message', channel)
+			print(f"Message directory path: {message_dir}")
+
+			try:
+				os.makedirs(message_dir, exist_ok=True)
+				print(f"Created/verified directory at: {message_dir}")
+			except OSError as e:
+				print(f"Error creating directory: {str(e)}")
+				self._send_json_response({
+					'error': 'Failed to create message directory',
+					'debug_info': {'error': str(e)}
+				}, 500)
+				return
+
+			# Generate timestamp and filename
+			timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+			filename = f"{timestamp}.txt"
+			filepath = os.path.join(message_dir, filename)
+			print(f"Will save message to: {filepath}")
+
+			# Write message to file
+			try:
+				with open(filepath, 'w', encoding='utf-8') as f:
+					f.write(f"Author: {author}\n")
+					f.write(f"Channel: {channel}\n")
+					f.write(f"Timestamp: {timestamp}\n\n")
+					f.write(content)
+					if tags:
+						f.write(f"\n\nTags: {' '.join(tags)}")
+			except IOError as e:
+				print(f"Error writing file: {str(e)}")
+				self._send_json_response({
+					'error': 'Failed to write message',
+					'debug_info': {'error': str(e)}
+				}, 500)
+				return
+
+			# Regenerate chat.html
+			print("Regenerating chat.html...")
+			try:
+				self.generate_and_serve_chat(channel)
+				print("Successfully regenerated chat.html")
+			except Exception as e:
+				print(f"Error regenerating chat.html: {str(e)}")
+
+			# Invalidate cache
+			page_cache.invalidate(f'chat/{channel}')
+			git_cache.invalidate(channel)
+
+			print("=== Chat post handling complete ===\n")
+			self._send_json_response({
+				'status': 'success',
+				'timestamp': timestamp,
+				'debug_info': {
+					'filepath': filepath,
+					'channel': channel,
+					'message_length': len(content)
+				}
+			})
+
+		except Exception as e:
+			import traceback
+			trace = traceback.format_exc()
+			print(f"Unexpected error: {str(e)}")
+			print(f"Traceback:\n{trace}")
+			self._send_json_response({
+				'error': str(e),
+				'debug_info': {
+					'traceback': trace,
+					'error_type': type(e).__name__
+				}
+			}, 500)
+
+	def _send_json_response(self, data, status=200):
+		"""Helper method to send JSON responses"""
+		response = json.dumps(data)
+		response_bytes = response.encode('utf-8')
+
+		self.handler.send_response(status)
+		self.handler.send_header('Content-Type', 'application/json')
+		self.handler.send_header('Content-Length', len(response_bytes))
+		self.handler.send_header('Cache-Control', 'no-cache')
+		self.handler.end_headers()
+		self.handler.wfile.write(response_bytes)
+
+# end chat_handler.py ; marker comment, please include this, including this comment
