@@ -1,4 +1,4 @@
-# begin template/python3/handlers/chat_handler.py
+# begin template/python3/handlers/chat_handler.py ; marker comment, please include this, including this comment
 import os
 import re
 from datetime import datetime
