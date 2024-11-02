@@ -1,4 +1,4 @@
-# begin template/python3/http_handler.py
+# begin template/python3/http_handler.py ; marker comment, please include this, including this comment
 import os
 from http.server import SimpleHTTPRequestHandler
 from pathlib import Path
@@ -12,19 +12,36 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 	static_files_initialized = False
 	base_directory = None  # Class variable to store the base directory
 
+	def setup(self):
+		"""Set up the handler before processing requests"""
+		# Set base directory if not already set
+		if CustomHTTPRequestHandler.base_directory is None:
+			CustomHTTPRequestHandler.base_directory = os.getcwd()
+
+		# Set instance directory
+		self.directory = CustomHTTPRequestHandler.base_directory
+
+		# Initialize all handlers before parent setup
+		self.script_handler = ScriptHandler(self)
+		self.static_handler = StaticFileHandler(self)
+		self.chat_handler = ChatHandler(self)
+		self.request_handler = RequestHandler(self)
+
+		# Call parent setup last
+		super().setup()
+
 	def __init__(self, *args, **kwargs):
+		# Store args for parent init
+		self._args = args
+		self._kwargs = kwargs
+
+		# Set directory before parent init
 		if CustomHTTPRequestHandler.base_directory is None:
 			CustomHTTPRequestHandler.base_directory = os.getcwd()
 		self.directory = CustomHTTPRequestHandler.base_directory
 
-		# Initialize handlers before calling parent's __init__
-		self.request_handler = RequestHandler(self)
-		self.static_handler = StaticFileHandler(self)
-		self.chat_handler = ChatHandler(self)
-		self.script_handler = ScriptHandler(self)
-
-		# Call parent's __init__ with the correct arguments
-		SimpleHTTPRequestHandler.__init__(self, *args, directory=self.directory)
+		# Call parent init with directory
+		super().__init__(*args, directory=self.directory)
 
 	@property
 	def template_directory(self):
@@ -58,4 +75,4 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
 		"""Setup static files by copying them from template to static directories"""
 		cls.base_directory = directory
 		StaticFileHandler.setup_static_files(cls, directory)
-# end http_handler.py
+# end http_handler.py ; marker comment, please include this, including this comment
