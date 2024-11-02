@@ -10,6 +10,7 @@ import os
 import webbrowser
 from server import run_server
 from utils import is_port_in_use, find_available_port
+import time
 
 def main():
 	parser = argparse.ArgumentParser(description="Run a simple HTTP server.")
@@ -20,18 +21,35 @@ def main():
 
 	args = parser.parse_args()
 
+	# Find an available port
 	port = args.port
 	while is_port_in_use(port):
 		print(f"Port {port} is already in use.")
 		port = find_available_port(port + 1)
 		print(f"Trying port {port}...")
 
-	run_server(port, args.directory)
+	# Start the server
+	httpd = run_server(port, args.directory)
 
-	# Open the server in the browser
-	url = f"http://localhost:{port}"
-	webbrowser.open(url)
-	print(f"Server is running on {url}")
+	if httpd is not None:
+		# Give the server a moment to start
+		time.sleep(0.5)
+
+		# Open the browser with the correct port
+		url = f"http://localhost:{port}"
+		webbrowser.open(url)
+		print(f"Server is running on {url}")
+
+		try:
+			# Keep the main thread running
+			while True:
+				time.sleep(1)
+		except KeyboardInterrupt:
+			print("\nShutting down server...")
+			httpd.shutdown()
+			httpd.server_close()
+	else:
+		print("Failed to start server")
 
 if __name__ == "__main__":
 	main()
