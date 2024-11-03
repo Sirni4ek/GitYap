@@ -1,5 +1,7 @@
 Priority tasks:
 
+In chat_handler.py, fix the issue with cached pages not being updated when a new message is added to the chat.
+
 The project should function seamlessly in the following scenario:
 - User forks the project on GitHub
 - User clones their fork of the project locally and runs it

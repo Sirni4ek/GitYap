@@ -57,13 +57,13 @@ class ChatHandler:
 		cache_key = f'chat_{channel}'
 		cached_content = page_cache.get(cache_key)
 
-		if cached_content:
-			print(f"Serving cached content for channel: {channel}")
-			self.handler.send_response(200)
-			self.handler.send_header('Content-type', 'text/html')
-			self.handler.end_headers()
-			self.handler.wfile.write(cached_content.encode('utf-8'))
-			return
+		#if cached_content: #todo fix this to not use cache if a new comment was just posted
+		#	print(f"Serving cached content for channel: {channel}")
+		#	self.handler.send_response(200)
+		#	self.handler.send_header('Content-type', 'text/html')
+		#	self.handler.end_headers()
+		#	self.handler.wfile.write(cached_content.encode('utf-8'))
+		#	return
 
 		self.schedule_git_pull(channel)
 
