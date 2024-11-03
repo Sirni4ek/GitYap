@@ -211,7 +211,7 @@ class ChatHandler:
 				with open(filepath, 'w', encoding='utf-8') as f:
 					f.write(f"Author: {author}\n")
 					f.write(f"Channel: {channel}\n")
-					f.write(f"Timestamp: {timestamp}\n\n")
+					#f.write(f"Timestamp: {timestamp}\n\n") #todo
 					f.write(content)
 					if tags:
 						f.write(f"\n\nTags: {' '.join(tags)}")
