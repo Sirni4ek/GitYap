@@ -1,4 +1,4 @@
-# begin template/python3/chat/file_reader.py
+# begin template/python3/chat/file_reader.py ; marker comment, please do not remove
 import chardet
 import re
 
@@ -32,6 +32,5 @@ def truncate_message(content, max_length=300):
 	if len(content) <= max_length:
 		return content, False
 	return content[:max_length] + "...", True
-# end template/python3/chat/file_reader.py
-
+# end file_reader.py ; marker comment, please do not remove
 
