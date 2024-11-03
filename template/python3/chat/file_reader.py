@@ -21,11 +21,15 @@ def read_file(file_path):
 # Compile regular expressions once
 author_regex = re.compile(r'Author:\s*(.+)', re.IGNORECASE)
 hashtag_regex = re.compile(r'#\w+')
+#timestamp_regex = re.compile(r'Timestamp:\s*(\d{8}_\d{6})', re.IGNORECASE) #todo
 
 def extract_metadata(content):
 	author = author_regex.search(content)
 	author = author.group(1) if author else "Unknown"
 	hashtags = hashtag_regex.findall(content)
+	#todo timestamp = timestamp_regex.search(content)
+	#todo timestamp = timestamp.group(1) if timestamp else "Unknown"
+	#todo return author, hashtags, timestamp
 	return author, hashtags
 
 def truncate_message(content, max_length=300):
