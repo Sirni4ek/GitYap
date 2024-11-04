@@ -54,10 +54,10 @@ class MyProcessor:
 
 # Clone the repository
 git clone https://github.com/yourusername/gityap
-
+# Initialize the `g` command
+source gityap.sh
 # Start the server
-python3 start_server.py
-
+g start
 # Access the web interface
 open http://localhost:8000
 ```
