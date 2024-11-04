@@ -1,4 +1,4 @@
-# begin template/python3/http/request_handler.py
+# begin template/python3/http/request_handler.py ; marker comment, please do not remove, including this message
 import json
 import urllib.parse
 import os
@@ -299,3 +299,5 @@ class RequestHandler:
 	def send_error(self, code: int, message: str):
 		"""Send an error as JSON response"""
 		return self.send_json_response({'error': message}, code)
+	
+# end request_handler.py ; marker comment, please do not remove, including this message
